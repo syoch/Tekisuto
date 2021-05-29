@@ -21,9 +21,9 @@ Application::Application(std::wstring const& class_name)
     L"int main(int argc, char** argv) {",
     L"  std::cout << \"Hello, World!\\n\"",
     L"}"
-  } (
+  } ) {
     GetCurrentContext().Source.emplace_back(L);
-  )
+  }
   
   _app_instance = this;
 }

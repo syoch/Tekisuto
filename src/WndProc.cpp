@@ -19,10 +19,20 @@ void Application::ForceRedraw() {
 void Application::DrawEditor() {
   PAINTSTRUCT ps;
   
+  auto& ctx = GetCurrentContext();
+  
   // 背景
   Drawing::DrawRect(0, 0, WindowSize.Width, WindowSize.Height, RGB(30, 30, 30));
   
-  
+  // ソースコード 描画
+  int begin = 0;
+  int end = std::min<int>(ctx.Source.size(), begin + WindowSize.Height / CHAR_HEIGHT);
+  int posX = 0, posY = 0;
+  for( ; begin < end; begin++, posY += 12 ) {
+    auto const& line = ctx.Source[begin];
+    
+    Drawing::DrawString(line, posX, posY, RGB(255, 255, 255), 0, true);
+  }
   
   
   
@@ -33,6 +43,7 @@ void Application::DrawEditor() {
 
 LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   HDC hdc;
+  HFONT hFont;
   
   auto& ctx = GetCurrentContext();
   
@@ -44,8 +55,18 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       hBitmap = CreateCompatibleBitmap(hdc, WindowSize.Width, WindowSize.Height);
       hBuffer = CreateCompatibleDC(hdc);
       
+      hFont = CreateFont(
+        CHAR_HEIGHT, CHAR_WIDTH,
+        0, 0, 0,
+        0, 0, 0,
+        SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        VARIABLE_PITCH | FF_ROMAN, TEXT("MeiryoKe_Console")
+      );
+      
       SelectObject(hBuffer, hBitmap);
       SelectObject(hBuffer, GetStockObject(NULL_PEN));
+      SelectObject(hBuffer, hFont);
       Drawing::SetTarget(hBuffer);
       
       PatBlt(hBuffer, 0, 0, WindowSize.Width, WindowSize.Height, WHITENESS);
@@ -58,6 +79,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     case WM_DESTROY: {
       DeleteDC(hBuffer);
       DeleteObject(hBitmap);
+      DeleteObject(hFont);
       
       PostQuitMessage(0);
       break;

@@ -15,3 +15,6 @@
 #include "Drawing.h"
 #include "Application/Application.h"
 
+#define  CHAR_WIDTH    7
+#define  CHAR_HEIGHT   12
+
