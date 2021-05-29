@@ -192,6 +192,50 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       break;
     }
     
+    // キー入力
+    case WM_KEYDOWN: {
+      auto& line = ctx.Source[ctx.CursorPos.Y];
+      auto& pos = ctx.CursorPos;
+      
+      switch( wp ) {
+        // 改行
+        case VK_RETURN: {
+          if( pos.X == 0 ) {
+            ctx.Source.insert(ctx.Source.begin() + pos.Y, L"");
+            pos.Y++;
+          }
+          else if( pos.X == line.length() ) {
+            pos.Y++;
+            pos.X = 0;
+            
+            if( pos.Y == ctx.Source.size() )
+              ctx.Source.emplace_back(L"");
+            else
+              ctx.Source.insert(ctx.Source.begin() + pos.Y, L"");
+          }
+          else {
+            auto&& cut = std::move(line.substr(pos.X));
+            
+            line = std::move(line.substr(0, pos.X));
+            pos.Y++;
+            pos.X = 0;
+            
+            if( pos.Y == ctx.Source.size() )
+              ctx.Source.emplace_back(cut);
+            else
+              ctx.Source.insert(ctx.Source.begin() + pos.Y, cut);
+          }
+          
+          break;
+        }
+      }
+      
+      DrawEditor();
+      ForceRedraw();
+      
+      break;
+    }
+    
     
     //
     default:
