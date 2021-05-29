@@ -1,15 +1,21 @@
 #pragma once
 
+#define  COLOR_BLACK    RGB(0, 0, 0)
+#define  COLOR_WHITE    RGB(255, 255, 255)
+#define  COLOR_RED      RGB(255, 0, 0)
+#define  COLOR_GREEN    RGB(0, 255, 0)
+#define  COLOR_BLUE     RGB(0, 0, 255)
+
 #define  CHAR_WIDTH    7    //
 #define  CHAR_HEIGHT   14   // 文字サイズ
 
-#define  WINDOW_BACKCOLOR   RGB(30, 30, 30)    // エディタ 編集部分 背景色
+#define  WINDOW_BACKCOLOR   COLOR_BLACK   // エディタ 編集部分 背景色
 
 #define  WINDOW_WIDTH_MAX   2000   //
 #define  WINDOW_HEIGHT_MAX  1200   // 最大ウィンドウサイズ
 
 #define  LINENUM_BAR_WIDTH  64               // 行番号バー 横幅
-#define  LINENUM_BACKCOLOR  RGB(80,80,80)    // 行番号バー 背景色
+#define  LINENUM_BACKCOLOR  RGB(30,30,30)    // 行番号バー 背景色
 
 struct Size {
   int Width = 0;

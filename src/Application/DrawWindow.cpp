@@ -43,7 +43,7 @@ void Application::DrawEditor() {
     Drawing::DrawString(line, LINENUM_BAR_WIDTH, posY, RGB(255, 255, 255), 0, true);
     
     // 行番号
-    Drawing::DrawString();
+    Drawing::DrawString(format(L"%8d", i + 1), 0, posY, RGB(255, 255, 255), 0, true);
   }
   
   // カーソル
