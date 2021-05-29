@@ -1,0 +1,8 @@
+/objects
+/.vs
+/.vscode
+
+*.exe
+*.out
+*.url
+*.lnk
