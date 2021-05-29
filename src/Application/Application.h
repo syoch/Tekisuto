@@ -38,13 +38,20 @@ struct EditContext {
   
   int  ScrollY = 0;
   int  ScrollBar_Pos_Real = 0;
+  int  ScrollBar_Pos_Draw = 0;
   
   bool   IsMouseDown = false;
 };
 
 class Application {
+public:
+  static inline bool IsThreadLoop = false;
+  static inline std::mutex Mtx;
+  
   std::vector<EditContext>  Contexts;
   int CurrentIndex = 0;
+  
+  std::unique_ptr<std::thread> thread_scrollBar;
   
   HWND      hwnd;          // ウィンドウハンドル
   WNDCLASS  winc;          // ウィンドウクラス
@@ -85,7 +92,6 @@ class Application {
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);
   
-public:
   Application(std::wstring const& class_name);
   ~Application();
   

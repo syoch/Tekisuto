@@ -4,6 +4,15 @@ LRESULT CALLBACK WndProc_Wrap(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   return Application::GetInstance()->WndProc(hwnd, msg, wp, lp);
 }
 
+void CALLBACK TIMER_ScrollBarAnim(HWND hwnd, UINT msg, UINT idEvent, DWORD dwTime) {
+  auto app = Application::GetInstance();
+  auto& ctx = app->GetCurrentContext();
+  
+  ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 10;
+  
+  
+}
+
 //
 // ウィンドウ情報を更新する
 void Application::UpdateWindowInfo() {
@@ -121,6 +130,14 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       break;
     }
     
+    case WM_TIMER: {
+      ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 5;
+      
+      DrawEditor();
+      ForceRedraw();
+      break;
+    }
+    
     // ウィンドウ 作成
     case WM_CREATE: {
       hdc = GetDC(hwnd);
@@ -153,6 +170,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       SelectObject(hBuffer, hFont);
       
       Drawing::SetTarget(hBuffer);
+      
+      SetTimer(hwnd, 1, 16, NULL);
       
       ReleaseDC(hwnd, hdc);
       break;

@@ -34,6 +34,8 @@ void Application::CheckScrollBarPos(int& pos) {
 //  エディタ 描画
 // ------------------------------------------------------- //
 void Application::DrawEditor() {
+  std::lock_guard<std::mutex> _lock(Mtx);
+  
   PAINTSTRUCT ps;
   
   auto& ctx = GetCurrentContext();
@@ -73,7 +75,7 @@ void Application::DrawEditor() {
   // スクロールバー つまみ
 //  int barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
 //  if( barSize < 20 ) barSize = 20;
-  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Real, SCROLLBAR_WIDTH - 4, barSize, SCROLLBAR_BAR_COLOR);
+  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Draw, SCROLLBAR_WIDTH - 4, barSize, SCROLLBAR_BAR_COLOR);
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)

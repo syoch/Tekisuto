@@ -5,10 +5,12 @@
 #include <cstring>
 #include <codecvt>
 #include <utility>
+#include <chrono>
 #include <thread>
 #include <locale>
 #include <string>
 #include <vector>
+#include <memory>
 #include <mutex>
 
 #define  UNICODE
