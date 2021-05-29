@@ -4,15 +4,6 @@ LRESULT CALLBACK WndProc_Wrap(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   return Application::GetInstance()->WndProc(hwnd, msg, wp, lp);
 }
 
-void CALLBACK TIMER_ScrollBarAnim(HWND hwnd, UINT msg, UINT idEvent, DWORD dwTime) {
-  auto app = Application::GetInstance();
-  auto& ctx = app->GetCurrentContext();
-  
-  ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 10;
-  
-  
-}
-
 //
 // ウィンドウ情報を更新する
 void Application::UpdateWindowInfo() {

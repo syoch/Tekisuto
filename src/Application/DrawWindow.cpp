@@ -34,8 +34,6 @@ void Application::CheckScrollBarPos(int& pos) {
 //  エディタ 描画
 // ------------------------------------------------------- //
 void Application::DrawEditor() {
-  std::lock_guard<std::mutex> _lock(Mtx);
-  
   PAINTSTRUCT ps;
   
   auto& ctx = GetCurrentContext();

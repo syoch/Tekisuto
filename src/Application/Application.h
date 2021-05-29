@@ -45,13 +45,8 @@ struct EditContext {
 
 class Application {
 public:
-  static inline bool IsThreadLoop = false;
-  static inline std::mutex Mtx;
-  
   std::vector<EditContext>  Contexts;
   int CurrentIndex = 0;
-  
-  std::unique_ptr<std::thread> thread_scrollBar;
   
   HWND      hwnd;          // ウィンドウハンドル
   WNDCLASS  winc;          // ウィンドウクラス
