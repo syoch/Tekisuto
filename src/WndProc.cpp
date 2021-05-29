@@ -53,7 +53,7 @@ void Application::UpdateCursorPos() {
   
   ctx.CursorPos = {
     MousePos_Client.X / CHAR_WIDTH,
-    MousePos_Client.Y / CHAR_HEIGHT
+    MousePos_Client.Y / CHAR_HEIGHT + ctx.ScrollY
   };
   
   if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
@@ -79,6 +79,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
   
   // 現在のコンテキスト
   auto& ctx = GetCurrentContext();
+  
+  barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
+  if( barSize < 40 ) barSize = 40;
+  
   
   switch( msg ) {
     // メニューバーなど
@@ -190,6 +194,9 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         SWP_SHOWWINDOW
       );
       
+      ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size()) - barSize / 2;
+      CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
+      
       DrawEditor();
       break;
     }
@@ -211,8 +218,11 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       else if( MousePos.X >= WindowInfo.rcClient.right - SCROLLBAR_WIDTH ) {
         IsScrolling = true;
         
-        ctx.ScrollY = MousePos_Client.Y / (ClientSize.Height / ctx.Source.size());
+        ctx.ScrollY = (MousePos_Client.Y - barSize / 2) / ((ClientSize.Height - barSize) / (float)ctx.Source.size());
         CheckScrollY(ctx.ScrollY);
+        
+        ctx.ScrollBar_Pos_Real = MousePos_Client.Y - barSize / 2;
+        CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
         
       }
       
@@ -231,10 +241,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       UpdateMouseInfo();
       
       if( IsScrolling ) { // スクロールバー
-        ctx.ScrollY = MousePos_Client.Y / (ClientSize.Height / ctx.Source.size());
+        ctx.ScrollY = (MousePos_Client.Y - barSize / 2) / ((ClientSize.Height - barSize) / (float)ctx.Source.size());
         CheckScrollY(ctx.ScrollY);
         
-        ctx.ScrollBar_Pos_Real = MousePos_Client.Y;
+        ctx.ScrollBar_Pos_Real = MousePos_Client.Y - barSize / 2;
         CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
         
       }
@@ -265,6 +275,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollY -= delta;
       CheckScrollY(ctx.ScrollY);
       
+      //ctx.ScrollBar_Pos_Real = MousePos_Client.Y;
+      //ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
+      ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
+      CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
       
       
       DrawEditor();

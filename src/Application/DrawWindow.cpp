@@ -24,10 +24,10 @@ void Application::CheckScrollY(int& y) {
 }
 
 void Application::CheckScrollBarPos(int& pos) {
-  pos -= 20;
+  //pos -= 20;
   
   if( pos < 0 ) pos = 0;
-  if( pos > ClientSize.Height - 40 ) pos = ClientSize.Height - 40;
+  if( pos > ClientSize.Height - barSize ) pos = ClientSize.Height - barSize;
 }
 
 // ------------------------------------------------------- //
@@ -42,7 +42,10 @@ void Application::DrawEditor() {
   Drawing::DrawRect(0, 0, ClientSize.Width, ClientSize.Height, WINDOW_BACKCOLOR);
   
   // 行番号 背景
-  Drawing::DrawRect(0, 0, LINENUM_BAR_WIDTH, ClientSize.Height, LINENUM_BACKCOLOR);
+  Drawing::DrawRect(0, 0, LINENUM_BAR_WIDTH - 4, ClientSize.Height, LINENUM_BACKCOLOR);
+  
+  // 行番号と編集部分の区切り
+  Drawing::DrawLine(LINENUM_BAR_WIDTH - 4, 0, LINENUM_BAR_WIDTH - 4, ClientSize.Height, COLOR_WHITE);
   
   // ソースコードの描画する範囲
   // 開始 ~ 終了 まで (単位 = 行)
@@ -62,13 +65,15 @@ void Application::DrawEditor() {
   
   // カーソル
   if( ctx.CursorPos.Y >= begin && ctx.CursorPos.Y < end )
-    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, ctx.CursorPos.Y * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
+    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
   
   // スクロールバー 背景
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH, 0, SCROLLBAR_WIDTH, ClientSize.Height, SCROLLBAR_BACKCOLOR);
   
   // スクロールバー つまみ
-  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Real, SCROLLBAR_WIDTH - 4, 40, SCROLLBAR_BAR_COLOR);
+//  int barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
+//  if( barSize < 20 ) barSize = 20;
+  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Real, SCROLLBAR_WIDTH - 4, barSize, SCROLLBAR_BAR_COLOR);
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)

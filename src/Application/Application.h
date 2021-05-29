@@ -64,6 +64,7 @@ class Application {
   Point   MousePos;         // 画面上
   Point   MousePos_Client;  // クライアント上
   
+  int barSize;
   bool IsScrolling = false; // スクロールバーを操作中か
   
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ

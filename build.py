@@ -12,9 +12,9 @@ target_time = getmtime(target) if os.path.exists(target) else 0
 src_dir   = 'src'
 obj_dir   = 'objects'
 
-c_flags   = '-O1'
+c_flags   = '-O1 -g'
 cxx_flags = c_flags + ' -std=gnu++2a -Wno-psabi'
-ld_flags  = '-Wl,--gc-sections,-s -mwindows'
+ld_flags  = '-Wl,--gc-sections -mwindows'
 
 src_flags = \
  {
