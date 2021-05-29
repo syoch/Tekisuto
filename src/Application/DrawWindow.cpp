@@ -48,7 +48,7 @@ void Application::DrawEditor() {
   
   // カーソル
   if( ctx.CursorPos.Y >= begin && ctx.CursorPos.Y < end )
-    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH, ctx.CursorPos.Y * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
+    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, ctx.CursorPos.Y * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)

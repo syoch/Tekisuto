@@ -22,34 +22,30 @@ void Application::UpdateWindowInfo() {
 }
 
 // マウス情報を更新
-Point Application::UpdateMouseInfo() {
+void Application::UpdateMouseInfo() {
   auto& ctx = GetCurrentContext();
   
   // マウス座標取得 (モニター)
   POINT mpos;
   GetCursorPos(&mpos);
   
-  // マウス座標更新 (ウィンドウ上)
-  Point mouse_pos = {
-    mpos.x - WindowInfo.rcClient.left,
+  MousePos = { mpos.x, mpos.y };
+  
+  MousePos_Client = {
+    mpos.x - WindowInfo.rcClient.left - LINENUM_BAR_WIDTH,
     mpos.y - WindowInfo.rcClient.top
   };
   
-  // カーソル位置を更新する
-  ctx.CursorPos = {
-    mouse_pos.X / CHAR_WIDTH,
-    mouse_pos.Y / CHAR_HEIGHT
-  };
+  if( MousePos_Client.X < 0 )
+    MousePos_Client.X = 0;
   
-  if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
-  if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
+  // if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
+  // if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
   
-  if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
-  if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
-    ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
+  // if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
+  // if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
+    // ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
   
-  
-  return { mpos.x, mpos.y };
 }
 
 // ------------------------------------------------------- //
@@ -182,15 +178,29 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     
     // マウスクリック
     case WM_LBUTTONDOWN: {
-      auto mouse_pos = UpdateMouseInfo();
+      UpdateMouseInfo();
       
       if(
-        mouse_pos.X >= WindowInfo.rcClient.left &&
-        mouse_pos.Y >= WindowInfo.rcClient.top &&
-        mouse_pos.X < WindowInfo.rcClient.right &&
-        mouse_pos.Y < WindowInfo.rcClient.bottom
+        MousePos.X >= WindowInfo.rcClient.left + LINENUM_BAR_WIDTH &&
+        MousePos.Y >= WindowInfo.rcClient.top &&
+        MousePos.X < WindowInfo.rcClient.right &&
+        MousePos.Y < WindowInfo.rcClient.bottom
       ) {
         ctx.IsMouseDown = true;
+        
+        ctx.CursorPos = {
+          MousePos_Client.X / CHAR_WIDTH,
+          MousePos_Client.Y / CHAR_HEIGHT
+        };
+        
+        if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
+        if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
+        
+        if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
+        if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
+          ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
+        
+        
       }
       
       SetCapture(hwnd);
@@ -207,6 +217,18 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       
       UpdateMouseInfo();
       
+      
+      ctx.CursorPos = {
+        MousePos_Client.X / CHAR_WIDTH,
+        MousePos_Client.Y / CHAR_HEIGHT
+      };
+      
+      if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
+      if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
+      
+      if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
+      if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
+        ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
       
       
       DrawEditor();

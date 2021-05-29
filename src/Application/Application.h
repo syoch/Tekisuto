@@ -52,6 +52,9 @@ class Application {
   // ウィンドウ情報
   WINDOWINFO  WindowInfo;
   
+  // マウス座標
+  Point   MousePos;         // 画面上
+  Point   MousePos_Client;  // クライアント上
   
   
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
@@ -63,7 +66,7 @@ class Application {
   void DrawEditor();
   
   void UpdateWindowInfo();
-  Point UpdateMouseInfo();
+  void UpdateMouseInfo();
   
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);
