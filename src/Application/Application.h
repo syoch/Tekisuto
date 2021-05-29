@@ -17,6 +17,11 @@
 #define  LINENUM_BAR_WIDTH  64               // 行番号バー 横幅
 #define  LINENUM_BACKCOLOR  RGB(30,30,30)    // 行番号バー 背景色
 
+#define  SCROLLBAR_WIDTH        20              // スクロールバー 横幅
+#define  SCROLLBAR_BACKCOLOR    RGB(30,30,30)   // スクロールバー 背景色
+#define  SCROLLBAR_BAR_COLOR    RGB(60,60,60)   // スクロールバー つまみ 色
+
+
 struct Size {
   int Width = 0;
   int Height = 0;
@@ -30,6 +35,7 @@ struct Point {
 struct EditContext {
   std::vector<std::wstring>   Source;
   Point    CursorPos;
+  int  ScrollY = 0;
   
   bool   IsMouseDown = false;
 };
@@ -67,6 +73,7 @@ class Application {
   
   void UpdateWindowInfo();
   void UpdateMouseInfo();
+  void UpdateCursorPos();
   
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);

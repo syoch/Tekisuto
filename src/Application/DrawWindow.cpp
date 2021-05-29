@@ -33,7 +33,7 @@ void Application::DrawEditor() {
   // ソースコードの描画する範囲
   // 開始 ~ 終了 まで (単位 = 行)
   const int begin = 0;
-  const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT);
+  const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT + 1);
   
   // ソースコード 描画
   int posY = 0;
@@ -49,6 +49,12 @@ void Application::DrawEditor() {
   // カーソル
   if( ctx.CursorPos.Y >= begin && ctx.CursorPos.Y < end )
     Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, ctx.CursorPos.Y * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
+  
+  // スクロールバー 背景
+  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH, 0, SCROLLBAR_WIDTH, ClientSize.Height, SCROLLBAR_BACKCOLOR);
+  
+  // スクロールバー つまみ
+  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, 0, SCROLLBAR_WIDTH - 4, 30, SCROLLBAR_BAR_COLOR);
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)

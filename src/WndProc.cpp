@@ -48,6 +48,24 @@ void Application::UpdateMouseInfo() {
   
 }
 
+void Application::UpdateCursorPos() {
+  auto& ctx = GetCurrentContext();
+  
+  ctx.CursorPos = {
+    MousePos_Client.X / CHAR_WIDTH,
+    MousePos_Client.Y / CHAR_HEIGHT
+  };
+  
+  if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
+  if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
+  
+  if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
+  if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
+    ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
+  
+}
+
+
 // ------------------------------------------------------- //
 //  ウィンドウプロシージャ
 // ------------------------------------------------------- //
@@ -188,18 +206,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ) {
         ctx.IsMouseDown = true;
         
-        ctx.CursorPos = {
-          MousePos_Client.X / CHAR_WIDTH,
-          MousePos_Client.Y / CHAR_HEIGHT
-        };
-        
-        if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
-        if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
-        
-        if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
-        if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
-          ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
-        
+        UpdateCursorPos();
         
       }
       
@@ -216,20 +223,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         break;
       
       UpdateMouseInfo();
-      
-      
-      ctx.CursorPos = {
-        MousePos_Client.X / CHAR_WIDTH,
-        MousePos_Client.Y / CHAR_HEIGHT
-      };
-      
-      if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
-      if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
-      
-      if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
-      if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
-        ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
-      
+      UpdateCursorPos();
       
       DrawEditor();
       ForceRedraw();
@@ -242,6 +236,21 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       
       ReleaseCapture();
       
+      break;
+    }
+    
+    // マウスホイール
+    case WM_MOUSEWHEEL: {
+      int delta = GET_WHEEL_DELTA_WPARAM(wp);
+      delta /= 40;
+      
+      ctx.ScrollY -= delta;
+      CheckScrollY(ctx.ScrollY);
+      
+      
+      
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
