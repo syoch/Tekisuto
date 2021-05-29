@@ -59,10 +59,50 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
   HDC hdc;
   HFONT hFont;  // 文字描画用フォント
   
+  // メニューバー "ファイル -> 開く"
+  static OPENFILENAME  ofn;           // ダイアログ表示用構造体 ( WM_CREATE で初期化されます )
+  static wchar_t OpenFile_buf[1000];  // ファイルのフルパス用バッファ
+  
   // 現在のコンテキスト
   auto& ctx = GetCurrentContext();
   
   switch( msg ) {
+    // メニューバーなど
+    case WM_COMMAND: {
+      switch( LOWORD(wp) ) {
+        // ファイル -> 開く
+        case MENUBAR_FILE_OPEN: {
+          memset(OpenFile_buf, 0, sizeof(OpenFile_buf));
+          GetOpenFileName(&ofn);
+          
+          std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+          
+          std::ifstream ifs(converter.to_bytes(OpenFile_buf));
+          std::string line;
+          
+          if( ifs.fail() ) {
+            
+            break;
+          }
+          
+          ctx.Source.clear();
+          while( std::getline(ifs, line) ) {
+            //auto&& ws = std::move(converter.from_bytes(line));
+            auto ws = converter.from_bytes(line);
+            //replace_wstr(ws, L"\t", L" ");
+            ctx.Source.emplace_back(ws);
+          }
+          
+          ctx.CursorPos = { 0, 0 };
+          DrawEditor();
+          ForceRedraw();
+          break;
+        }
+      }
+      
+      break;
+    }
+    
     // ウィンドウ 作成
     case WM_CREATE: {
       hdc = GetDC(hwnd);
@@ -78,6 +118,17 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
         VARIABLE_PITCH | FF_ROMAN, TEXT("MeiryoKe_Console")
       );
+      
+      ofn.lStructSize = sizeof(OPENFILENAME);
+      ofn.hwndOwner = hwnd;
+    //  ofn.lpstrFilter = TEXT("Text files {*.txt}\0*.txt\0");
+      ofn.lpstrFilter = TEXT("C++ Files (.cpp)\0*.cpp\0All files\0*.*\0");
+      //ofn.lpstrCustomFilter = strCustom;
+      ofn.nMaxCustFilter = 256;
+      ofn.nFilterIndex = 0;
+      ofn.lpstrFile = OpenFile_buf;
+      ofn.nMaxFile = MAX_PATH;
+      ofn.Flags = OFN_FILEMUSTEXIST;
       
       SelectObject(hBuffer, hBitmap);
       SelectObject(hBuffer, GetStockObject(NULL_PEN));
@@ -224,6 +275,40 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
               ctx.Source.emplace_back(cut);
             else
               ctx.Source.insert(ctx.Source.begin() + pos.Y, cut);
+          }
+          
+          break;
+        }
+        
+        // 削除 (Backspace)
+        case VK_BACK: {
+          if( pos.X == 0 ) {
+            if( pos.Y >= 1 ) {
+              pos.Y--;
+              pos.X = ctx.Source[pos.Y].length();
+              
+              ctx.Source[pos.Y] += line;
+              ctx.Source.erase(ctx.Source.begin() + pos.Y + 1);
+            }
+          }
+          else {
+            pos.X--;
+            line.erase(line.begin() + pos.X);
+          }
+          
+          break;
+        }
+        
+        // 削除 (Delete)
+        case VK_DELETE: {
+          if( pos.X == line.length() ) {
+            if( pos.Y < ctx.Source.size() - 1 ) {
+              line += ctx.Source[pos.Y + 1];
+              ctx.Source.erase(ctx.Source.begin() + pos.Y + 1);
+            }
+          }
+          else {
+            line.erase(line.begin() + pos.X);
           }
           
           break;

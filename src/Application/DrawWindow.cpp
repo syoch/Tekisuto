@@ -25,7 +25,10 @@ void Application::DrawEditor() {
   auto& ctx = GetCurrentContext();
   
   // 背景
-  Drawing::DrawRect(0, 0, ClientSize.Width, ClientSize.Height, RGB(30, 30, 30));
+  Drawing::DrawRect(0, 0, ClientSize.Width, ClientSize.Height, WINDOW_BACKCOLOR);
+  
+  // 行番号 背景
+  Drawing::DrawRect(0, 0, LINENUM_BAR_WIDTH, ClientSize.Height, LINENUM_BACKCOLOR);
   
   // ソースコードの描画する範囲
   // 開始 ~ 終了 まで (単位 = 行)
@@ -33,11 +36,14 @@ void Application::DrawEditor() {
   const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT);
   
   // ソースコード 描画
-  int posX = 0, posY = 0;
+  int posY = 0;
   for( auto i = begin; i < end; i++, posY += CHAR_HEIGHT ) {
     auto const& line = ctx.Source[i];
     
-    Drawing::DrawString(line, posX, posY, RGB(255, 255, 255), 0, true);
+    Drawing::DrawString(line, LINENUM_BAR_WIDTH, posY, RGB(255, 255, 255), 0, true);
+    
+    // 行番号
+    Drawing::DrawString();
   }
   
   // カーソル
