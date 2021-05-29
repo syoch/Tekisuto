@@ -29,13 +29,13 @@ void Application::DrawEditor() {
   
   // ソースコードの描画する範囲
   // 開始 ~ 終了 まで (単位 = 行)
-  int begin = 0;
-  int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT);
+  const int begin = 0;
+  const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT);
   
   // ソースコード 描画
   int posX = 0, posY = 0;
-  for( ; begin < end; begin++, posY += CHAR_HEIGHT ) {
-    auto const& line = ctx.Source[begin];
+  for( auto i = begin; i < end; i++, posY += CHAR_HEIGHT ) {
+    auto const& line = ctx.Source[i];
     
     Drawing::DrawString(line, posX, posY, RGB(255, 255, 255), 0, true);
   }
