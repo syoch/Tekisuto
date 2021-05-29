@@ -10,5 +10,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     return -1;
   
   app.Show();
-  return app.RunMainLoop();
+  app.RunMainLoop();
+  
+  return 0;
 }

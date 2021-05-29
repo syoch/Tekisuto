@@ -41,7 +41,7 @@ ATOM  Application::Register(HINSTANCE hInstance) {
   winc.hIcon          = LoadIcon(NULL , IDI_APPLICATION);
   winc.hCursor        = LoadCursor(NULL , IDC_ARROW);
   winc.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
-  winc.lpszMenuName	  = NULL;
+  winc.lpszMenuName	  = TEXT("TEKISUTO_MENUBAR");
   winc.lpszClassName  = className.c_str();
   
   return RegisterClass(&winc);

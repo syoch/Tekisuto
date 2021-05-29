@@ -9,21 +9,29 @@ class Application {
   std::vector<EditContext>  Contexts;
   int CurrentIndex = 0;
   
-  HWND      hwnd;
-  WNDCLASS  winc;
-  MSG       msg;
-  WNDPROC   wndProc;
-  HBITMAP   hBitmap;
-  HDC       hBuffer;
-  HINSTANCE hInstance;
-  std::wstring className;
+  HWND      hwnd;          // ウィンドウハンドル
+  WNDCLASS  winc;          // ウィンドウクラス
+  MSG       msg;           // メッセージ
+  WNDPROC   wndProc;       // ウィンドウプロシージャ
+  HINSTANCE hInstance;     // アプリケーションのインスタンスハンドル
+  std::wstring className;  // クラス名
   
-  Size      WindowSize = { 600, 400 };
+  // ダブルバッファリング
+  HBITMAP   hBitmap;       // ビットマップ
+  HDC       hBuffer;       // ビットマップ バッファ
+  
+  // ウィンドウ情報
+  WINDOWINFO  WindowInfo;
+  
+  Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
+  Size   ClientSize;                   // クライアントサイズ
   
   EditContext& GetCurrentContext() const;
   
   void ForceRedraw();
   void DrawEditor();
+  
+  void UpdateWindowInfo();
   
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);

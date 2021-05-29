@@ -1,5 +1,10 @@
 #pragma once
 
+#define  CHAR_WIDTH    7
+#define  CHAR_HEIGHT   14
+
+
+
 struct Size {
   int Width = 0;
   int Height = 0;

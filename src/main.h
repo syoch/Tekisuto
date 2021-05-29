@@ -11,10 +11,10 @@
 #define  UNICODE
 #include <windows.h>
 
+#include "values.h"
 #include "types.h"
 #include "Drawing.h"
 #include "Application/Application.h"
+#include "resource.h"
 
-#define  CHAR_WIDTH    7
-#define  CHAR_HEIGHT   12
 

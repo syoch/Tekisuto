@@ -1,0 +1,8 @@
+TEKISUTO_MENUBAR MENU {
+  POPUP "ファイル (&F)" {
+    MENUITEM "開く (&O)", 10000
+    MENUITEM SEPARATOR
+    MENUITEM "設定", 10100
+    MENUITEM "終了", 10200
+  }
+}

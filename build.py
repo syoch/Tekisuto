@@ -4,9 +4,9 @@ import glob
 getmtime  = os.path.getmtime
 basename  = os.path.basename
 
-extensions = ['c', 'cpp']
+extensions = ['c', 'cpp', 'rc']
 
-target      = 'Sharp.exe'
+target      = 'Tekisuto.exe'
 target_time = getmtime(target) if os.path.exists(target) else 0
 
 src_dir   = 'src'
@@ -19,13 +19,15 @@ ld_flags  = '-Wl,--gc-sections,-s -mwindows'
 src_flags = \
  {
    'c' : c_flags,
-   'cpp' : cxx_flags
+   'cpp' : cxx_flags,
+   'rc' : ''
  }
 
 compiler  = \
  {
    'c' : 'gcc',
    'cpp' : 'g++',
+   'rc' : 'windres'
  }
 
 src_files = [ ]
@@ -44,7 +46,10 @@ def get_ext(name):
 
 def get_depends(file):
   D = f'{obj_dir}/{basename(change_ext(file, "d"))}'
-  os.system(f'gcc -MM -o {D} {file}')
+  res = os.system(f'gcc -MM -o {D} {file}')
+  
+  if res != 0:
+    exit(0)
   
   ret = [ ]
   lines = open(D).readlines()
@@ -68,7 +73,12 @@ def check_build(file):
   else:
     obj_time = getmtime(obj)
   
-  depends = get_depends(file)
+  depends = [ ]
+  
+  if get_ext(file) != 'rc':
+    depends = get_depends(file)
+  else:
+    depends = [ file ]
   
   for D in depends:
     if getmtime(D) > obj_time:
@@ -86,7 +96,11 @@ for src in src_files:
   if check_build(src):
     updated = True
     print(basename(src))
-    res = os.system(f'{compiler[get_ext(src)]} {src_flags[get_ext(src)]} -c -o {obj_dir}/{basename(change_ext(src, "o"))} {src}')
+    
+    if get_ext(src) == 'rc':
+      res = os.system(f'windres {src} {obj_dir}/{basename(change_ext(src, "o"))}')
+    else:
+      res = os.system(f'{compiler[get_ext(src)]} {src_flags[get_ext(src)]} -c -o {obj_dir}/{basename(change_ext(src, "o"))} {src}')
     
     if res != 0:
       exit(1)
