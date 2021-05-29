@@ -36,8 +36,8 @@ void Application::UpdateMouseInfo() {
     mpos.y - WindowInfo.rcClient.top
   };
   
-  if( MousePos_Client.X < 0 )
-    MousePos_Client.X = 0;
+  if( MousePos_Client.X < 0 ) MousePos_Client.X = 0;
+  if( MousePos_Client.Y < 0 ) MousePos_Client.Y = 0;
   
   // if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
   // if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
@@ -197,16 +197,22 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     // マウスクリック
     case WM_LBUTTONDOWN: {
       UpdateMouseInfo();
+      ctx.IsMouseDown = true;
       
       if(
         MousePos.X >= WindowInfo.rcClient.left + LINENUM_BAR_WIDTH &&
         MousePos.Y >= WindowInfo.rcClient.top &&
-        MousePos.X < WindowInfo.rcClient.right &&
+        MousePos.X < WindowInfo.rcClient.right - SCROLLBAR_WIDTH &&
         MousePos.Y < WindowInfo.rcClient.bottom
       ) {
-        ctx.IsMouseDown = true;
-        
         UpdateCursorPos();
+        
+      }
+      else if( MousePos.X >= WindowInfo.rcClient.right - SCROLLBAR_WIDTH ) {
+        IsScrolling = true;
+        
+        ctx.ScrollY = MousePos_Client.Y / (ClientSize.Height / ctx.Source.size());
+        CheckScrollY(ctx.ScrollY);
         
       }
       
@@ -223,7 +229,19 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         break;
       
       UpdateMouseInfo();
-      UpdateCursorPos();
+      
+      if( IsScrolling ) { // スクロールバー
+        ctx.ScrollY = MousePos_Client.Y / (ClientSize.Height / ctx.Source.size());
+        CheckScrollY(ctx.ScrollY);
+        
+        ctx.ScrollBar_Pos_Real = MousePos_Client.Y;
+        CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
+        
+      }
+      else { // カーソル
+        
+        UpdateCursorPos();
+      }
       
       DrawEditor();
       ForceRedraw();
@@ -233,9 +251,9 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     // マウス 離す
     case WM_LBUTTONUP: {
       ctx.IsMouseDown = false;
+      IsScrolling = false;
       
       ReleaseCapture();
-      
       break;
     }
     

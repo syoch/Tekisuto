@@ -35,7 +35,9 @@ struct Point {
 struct EditContext {
   std::vector<std::wstring>   Source;
   Point    CursorPos;
+  
   int  ScrollY = 0;
+  int  ScrollBar_Pos_Real = 0;
   
   bool   IsMouseDown = false;
 };
@@ -62,6 +64,7 @@ class Application {
   Point   MousePos;         // 画面上
   Point   MousePos_Client;  // クライアント上
   
+  bool IsScrolling = false; // スクロールバーを操作中か
   
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
   Size   ClientSize;                   // クライアントサイズ
@@ -74,6 +77,9 @@ class Application {
   void UpdateWindowInfo();
   void UpdateMouseInfo();
   void UpdateCursorPos();
+  
+  void CheckScrollY(int& y);
+  void CheckScrollBarPos(int& pos);
   
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);

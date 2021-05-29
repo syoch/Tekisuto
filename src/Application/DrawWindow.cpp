@@ -16,6 +16,20 @@ void Application::ForceRedraw() {
   DeleteDC(hdc);
 }
 
+void Application::CheckScrollY(int& y) {
+  auto& ctx = GetCurrentContext();
+  
+  if( y < 0 ) y = 0;
+  if( y >= ctx.Source.size() ) y = ctx.Source.size() - 1;
+}
+
+void Application::CheckScrollBarPos(int& pos) {
+  pos -= 20;
+  
+  if( pos < 0 ) pos = 0;
+  if( pos > ClientSize.Height - 40 ) pos = ClientSize.Height - 40;
+}
+
 // ------------------------------------------------------- //
 //  エディタ 描画
 // ------------------------------------------------------- //
@@ -32,7 +46,7 @@ void Application::DrawEditor() {
   
   // ソースコードの描画する範囲
   // 開始 ~ 終了 まで (単位 = 行)
-  const int begin = 0;
+  const int begin = ctx.ScrollY;
   const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT + 1);
   
   // ソースコード 描画
@@ -54,7 +68,7 @@ void Application::DrawEditor() {
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH, 0, SCROLLBAR_WIDTH, ClientSize.Height, SCROLLBAR_BACKCOLOR);
   
   // スクロールバー つまみ
-  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, 0, SCROLLBAR_WIDTH - 4, 30, SCROLLBAR_BAR_COLOR);
+  Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Real, SCROLLBAR_WIDTH - 4, 40, SCROLLBAR_BAR_COLOR);
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)
