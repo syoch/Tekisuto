@@ -21,6 +21,37 @@ void Application::UpdateWindowInfo() {
   };
 }
 
+// マウス情報を更新
+Point Application::UpdateMouseInfo() {
+  auto& ctx = GetCurrentContext();
+  
+  // マウス座標取得 (モニター)
+  POINT mpos;
+  GetCursorPos(&mpos);
+  
+  // マウス座標更新 (ウィンドウ上)
+  Point mouse_pos = {
+    mpos.x - WindowInfo.rcClient.left,
+    mpos.y - WindowInfo.rcClient.top
+  };
+  
+  // カーソル位置を更新する
+  ctx.CursorPos = {
+    mouse_pos.X / CHAR_WIDTH,
+    mouse_pos.Y / CHAR_HEIGHT
+  };
+  
+  if( ctx.CursorPos.Y < 0 ) ctx.CursorPos.Y = 0;
+  if( ctx.CursorPos.Y >= ctx.Source.size() ) ctx.CursorPos.Y = ctx.Source.size() - 1;
+  
+  if( ctx.CursorPos.X < 0 ) ctx.CursorPos.X = 0;
+  if( ctx.CursorPos.X > ctx.Source[ctx.CursorPos.Y].length() )
+    ctx.CursorPos.X = ctx.Source[ctx.CursorPos.Y].length();
+  
+  
+  return { mpos.x, mpos.y };
+}
+
 // ------------------------------------------------------- //
 //  ウィンドウプロシージャ
 // ------------------------------------------------------- //
@@ -100,25 +131,64 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     
     // マウスクリック
     case WM_LBUTTONDOWN: {
-      // マウス座標取得 (モニター)
-      POINT mpos;
-      GetCursorPos(&mpos);
+      auto mouse_pos = UpdateMouseInfo();
       
-      // マウス座標更新 (ウィンドウ上)
-      Point mouse_pos = {
-        mpos.x - WindowInfo.rcClient.left,
-        mpos.y - WindowInfo.rcClient.top
-      };
+      if(
+        mouse_pos.X >= WindowInfo.rcClient.left &&
+        mouse_pos.Y >= WindowInfo.rcClient.top &&
+        mouse_pos.X < WindowInfo.rcClient.right &&
+        mouse_pos.Y < WindowInfo.rcClient.bottom
+      ) {
+        ctx.IsMouseDown = true;
+      }
       
-      // カーソル位置を更新する
-      ctx.CursorPos = {
-        mouse_pos.X / CHAR_WIDTH,
-        mouse_pos.Y / CHAR_HEIGHT
-      };
+      SetCapture(hwnd);
+      
+      DrawEditor();
+      ForceRedraw();
+      break;
+    }
+    
+    // マウス 移動
+    case WM_MOUSEMOVE: {
+      if( !ctx.IsMouseDown )
+        break;
+      
+      UpdateMouseInfo();
+      
       
       
       DrawEditor();
       ForceRedraw();
+      break;
+    }
+    
+    // マウス 離す
+    case WM_LBUTTONUP: {
+      ctx.IsMouseDown = false;
+      
+      ReleaseCapture();
+      
+      break;
+    }
+    
+    // 文字挿入
+    case WM_CHAR: {
+      static const std::wstring check_str = L" `~!@#$%^&*()_-+={[}]\\|'\";:,<.>/?";
+      wchar_t keycode = wp & 0xFFFF;
+      
+      if( !isalnum(keycode) ) {
+        if( check_str.find(keycode) == std::wstring::npos )
+          break;
+      }
+      
+      auto& line = ctx.Source[ctx.CursorPos.Y];
+      line.insert(line.begin() + ctx.CursorPos.X, keycode);
+      ctx.CursorPos.X++;
+      
+      DrawEditor();
+      ForceRedraw();
+      
       break;
     }
     

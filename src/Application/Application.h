@@ -36,6 +36,7 @@ class Application {
   void DrawEditor();
   
   void UpdateWindowInfo();
+  Point UpdateMouseInfo();
   
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);
