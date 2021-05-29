@@ -100,6 +100,21 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     
     // マウスクリック
     case WM_LBUTTONDOWN: {
+      // マウス座標取得 (モニター)
+      POINT mpos;
+      GetCursorPos(&mpos);
+      
+      // マウス座標更新 (ウィンドウ上)
+      Point mouse_pos = {
+        mpos.x - WindowInfo.rcClient.left,
+        mpos.y - WindowInfo.rcClient.top
+      };
+      
+      // カーソル位置を更新する
+      ctx.CursorPos = {
+        mouse_pos.X / CHAR_WIDTH,
+        mouse_pos.Y / CHAR_HEIGHT
+      };
       
       
       DrawEditor();

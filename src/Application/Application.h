@@ -3,6 +3,8 @@
 struct EditContext {
   std::vector<std::wstring>   Source;
   Point    CursorPos;
+  
+  bool   IsMouseDown = false;
 };
 
 class Application {
@@ -22,6 +24,8 @@ class Application {
   
   // ウィンドウ情報
   WINDOWINFO  WindowInfo;
+  
+  
   
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
   Size   ClientSize;                   // クライアントサイズ
