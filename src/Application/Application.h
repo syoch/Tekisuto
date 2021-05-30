@@ -96,6 +96,8 @@ public:
   // 描画の開始から終了まで
   Range  DrawIndexRange;
   
+  bool IsScrollTimerLocked = false;
+  
   EditContext& GetCurrentContext() const;
   
   void ForceRedraw();

@@ -73,13 +73,13 @@ void Application::DrawEditor() {
   // 開始 ~ 終了 まで (単位 = 行)
   DrawIndexRange = {
     ctx.ScrollY,
-    std::min<int>(ctx.Source.size(), DrawIndexRange.Begin + ClientSize.Height / CHAR_HEIGHT + 1)
+    std::min<int>(ctx.Source.size(), DrawIndexRange.Begin + ClientSize.Height / CHAR_HEIGHT + 10)
   };
   
   // カーソルがある行の背景を明るくする
   if( ctx.CursorPos.Y >= DrawIndexRange.Begin &&
     ctx.CursorPos.Y <= DrawIndexRange.End ) {
-    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR, );
   }
   
   // ソースコード 描画
@@ -105,6 +105,6 @@ void Application::DrawEditor() {
   
   // バッファからウィンドウにコピー (ダブルバッファリング)
   auto hdc = BeginPaint(hwnd, &ps);
-  BitBlt(hdc, 0, 0, WindowSize.Width, WindowSize.Height, hBuffer, 0, 0, SRCCOPY);
+  BitBlt(hdc, 0, 0, ClientSize.Width, ClientSize.Height, hBuffer, 0, 0, SRCCOPY);
   EndPaint(hwnd, &ps);
 }

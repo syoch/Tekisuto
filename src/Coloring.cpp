@@ -124,6 +124,7 @@ static auto _Wkeywords =
   L"true",
   L"else",
   L"case",
+  L"NULL",
   L"try",
   L"for",
   L"new",

@@ -132,7 +132,15 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     case WM_TIMER: {
       switch( wp ) {
         case TIMER_SCROLLBAR: {
+          auto old_val = ctx.ScrollBar_Pos_Draw;
+          
           ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
+          
+          if( !IsScrollTimerLocked && abs(old_val - ctx.ScrollBar_Pos_Draw) <= 1 ){
+            KillTimer(hwnd, TIMER_SCROLLBAR);
+            break;
+          }
+          
           DrawEditor();
           ForceRedraw();
           break;
@@ -176,10 +184,11 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       Drawing::SetTarget(hBuffer);
       
       // タイマー初期化
-      SetTimer(hwnd, TIMER_SCROLLBAR, 8, NULL);
+      //SetTimer(hwnd, TIMER_SCROLLBAR, 8, NULL);
       //SetTimer(hwnd, TIMER_COLORING, 16, NULL);
       
       ReleaseDC(hwnd, hdc);
+      
       break;
     }
     
@@ -187,6 +196,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     case WM_SHOWWINDOW: {
       UpdateWindowInfo();
       SourceColoring();
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
@@ -223,7 +234,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size()) - barSize / 2;
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
       
-      //DrawEditor();
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
@@ -250,12 +262,14 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         ctx.ScrollBar_Pos_Real = MousePos_Client.Y - barSize / 2;
         CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
         
+        IsScrollTimerLocked = true;
+        SetTimer(hwnd, TIMER_SCROLLBAR, 2, NULL);
       }
       
       SetCapture(hwnd);
       
-      //DrawEditor();
-      //ForceRedraw();
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
@@ -280,7 +294,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       }
       
       DrawEditor();
-      //ForceRedraw();
+      ForceRedraw();
       break;
     }
     
@@ -288,6 +302,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     case WM_LBUTTONUP: {
       ctx.IsMouseDown = false;
       IsScrolling = false;
+      IsScrollTimerLocked = false;
       
       ReleaseCapture();
       break;
@@ -301,14 +316,12 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollY -= delta;
       CheckScrollY(ctx.ScrollY);
       
-      //ctx.ScrollBar_Pos_Real = MousePos_Client.Y;
-      //ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
       ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
       
       
-      //DrawEditor();
-      //ForceRedraw();
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
@@ -326,10 +339,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       line.insert(line.begin() + ctx.CursorPos.X, keycode);
       ctx.CursorPos.X++;
       
-      //DrawEditor();
-      //ForceRedraw();
-      
       SourceColoring();
+      
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     
@@ -405,10 +418,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         }
       }
       
-      //DrawEditor();
-      //ForceRedraw();
-      
       SourceColoring();
+      
+      DrawEditor();
+      ForceRedraw();
       break;
     }
     

@@ -18,9 +18,17 @@ namespace Drawing {
     return GetPixel(target, x, y);
   }
 
-  void DrawRect(int x, int y, int width, int height, COLORREF color) {
+  void DrawRect(int x, int y, int width, int height, COLORREF color, bool fill) {
     DeleteObject(SelectObject(target, CreateSolidBrush(color)));
-    PatBlt(target, x, y, width, height, PATCOPY);
+    
+    if( fill )
+      PatBlt(target, x, y, width, height, PATCOPY);
+    else {
+      DrawLine(x, y, x + width, y, color);
+      DrawLine(x, y + height, x + width, y + height, color);
+      DrawLine(x, y, x, y + height, color);
+      DrawLine(x + width, y, x + width, y + height, color);
+    }
   }
 
   void DrawLine(int x1, int y1, int x2, int y2, COLORREF color) {
