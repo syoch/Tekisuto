@@ -76,13 +76,13 @@ void Application::DrawEditor() {
     std::min<int>(ctx.Source.size(), DrawIndexRange.Begin + ClientSize.Height / CHAR_HEIGHT + 1)
   };
   
+  // カーソルがある行の背景を明るくする
+  if( ctx.CursorPos.Y >= DrawIndexRange.Begin &&
+    ctx.CursorPos.Y <= DrawIndexRange.End ) {
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR);
+  }
+  
   // ソースコード 描画
-  // int posY = 0;
-  // for( auto i = DrawIndexRange.Begin; i < DrawIndexRange.End; i++, posY += CHAR_HEIGHT ) {
-    // auto const& line = ctx.Source[i];
-    
-    // Drawing::DrawString(line, LINENUM_BAR_WIDTH, posY, RGB(255, 255, 255), 0, true);
-  // }
   for( auto&& token : ctx.ColorData ) {
     if( token.index < DrawIndexRange.Begin )
       continue;
@@ -91,7 +91,6 @@ void Application::DrawEditor() {
       break;
     
     auto posY = (token.index - ctx.ScrollY) * CHAR_HEIGHT;
-//    TextOut(hBuffer, LINENUM_BAR_WIDTH, posY, token.stptr, token.length);
     SetTextColor(hBuffer, token.color);
     TextOut(hBuffer, LINENUM_BAR_WIDTH + token.position * CHAR_WIDTH, posY, &ctx.Source[token.index][0] + token.position, token.length);
   }

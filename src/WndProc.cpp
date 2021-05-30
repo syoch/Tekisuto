@@ -137,17 +137,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
           ForceRedraw();
           break;
         }
-        
-        case TIMER_COLORING: {
-          //SourceColoring();
-          //DrawEditor();
-          //ForceRedraw();
-          break;
-        }
       }
       
-//      DrawEditor();
-//      ForceRedraw();
       break;
     }
     

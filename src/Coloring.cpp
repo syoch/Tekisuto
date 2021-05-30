@@ -59,13 +59,13 @@ struct SourceIterator {
   }
 };
 
-#define  TOKEN_PREPROCESS   RGB(157,126,98)
-#define  TOKEN_NUMBER       RGB(250,150,0)
-#define  TOKEN_IDENT        RGB(255,255,255)
-#define  TOKEN_STRING       RGB(150,150,150)
-#define  TOKEN_TYPEWORD     RGB(240,130,240)
-#define  TOKEN_KEYWORD      RGB(100,200,255)
-#define  TOKEN_COMMENT      RGB(40,200,40)
+#define  TOKEN_PREPROCESS   RGB(157,126,98)    // プリプロセッサ
+#define  TOKEN_NUMBER       RGB(250,150,0)     // 数字
+#define  TOKEN_IDENT        RGB(255,255,255)   // 識別子
+#define  TOKEN_STRING       RGB(200,200,200)   // 文字列
+#define  TOKEN_TYPEWORD     RGB(240,130,240)   // 予約語 1
+#define  TOKEN_KEYWORD      RGB(100,200,255)   // 予約語 2
+#define  TOKEN_COMMENT      RGB(40,200,40)     // コメント
 
 #define  _MAKE(cond)  \
   while( cond ) tok.length++, it++

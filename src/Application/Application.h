@@ -18,12 +18,14 @@
 #define  LINENUM_BACKCOLOR  RGB(30,30,30)    // 行番号バー 背景色
 
 #define  SCROLLBAR_WIDTH        20              // スクロールバー 横幅
-#define  SCROLLBAR_BACKCOLOR    RGB(30,30,30)   // スクロールバー 背景色
-#define  SCROLLBAR_BAR_COLOR    RGB(60,60,60)   // スクロールバー つまみ 色
+#define  SCROLLBAR_BACKCOLOR    RGB(50,50,50)   // スクロールバー 背景色
+#define  SCROLLBAR_BAR_COLOR    RGB(80,80,80)   // スクロールバー つまみ 色
+
+#define  CURRENT_LINE_BACKCOLOR  RGB(45,45,45)   // カーソル行 背景色
 
 // タイマー
 #define  TIMER_SCROLLBAR    100
-#define  TIMER_COLORING     200
+//#define  TIMER_COLORING     200 使わない
 
 
 struct Size {
