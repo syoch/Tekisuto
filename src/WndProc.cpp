@@ -112,6 +112,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             ctx.Source.emplace_back(ws);
           }
           
+          SourceColoring();
+          
           ctx.CursorPos = { 0, 0 };
           ctx.ScrollY = 0;
           ctx.ScrollBar_Pos_Real = false;
@@ -131,17 +133,21 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       switch( wp ) {
         case TIMER_SCROLLBAR: {
           ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
+          DrawEditor();
+          ForceRedraw();
           break;
         }
         
         case TIMER_COLORING: {
-          SourceColoring();
+          //SourceColoring();
+          //DrawEditor();
+          //ForceRedraw();
           break;
         }
       }
       
-      DrawEditor();
-      ForceRedraw();
+//      DrawEditor();
+//      ForceRedraw();
       break;
     }
     
@@ -180,7 +186,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       
       // タイマー初期化
       SetTimer(hwnd, TIMER_SCROLLBAR, 8, NULL);
-      SetTimer(hwnd, TIMER_COLORING, 2, NULL);
+      //SetTimer(hwnd, TIMER_COLORING, 16, NULL);
       
       ReleaseDC(hwnd, hdc);
       break;
@@ -189,6 +195,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     // ウィンドウ 表示 / 非表示
     case WM_SHOWWINDOW: {
       UpdateWindowInfo();
+      SourceColoring();
       break;
     }
     
@@ -281,7 +288,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         UpdateCursorPos();
       }
       
-      //DrawEditor();
+      DrawEditor();
       //ForceRedraw();
       break;
     }
@@ -331,6 +338,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       //DrawEditor();
       //ForceRedraw();
       
+      SourceColoring();
       break;
     }
     
@@ -409,6 +417,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       //DrawEditor();
       //ForceRedraw();
       
+      SourceColoring();
       break;
     }
     

@@ -145,8 +145,17 @@ void Application::SourceColoring() {
     
     // proprocess
     if( c == '#' ) {
-      tok.color = TOKEN_PREPROCESS;
+      tok.color = TOKEN_PREPROCESS; REjmpPrpp:
       _MAKE( it.line_check() && *it != '\n' );
+      
+      if(it.get_line()[it.get_line().length()-1]=='\\'){
+        ctx.ColorData.emplace_back(tok);
+        it++;
+        tok.length=0;
+        tok.index=it.index;
+        tok.position=it.position;
+        if(it.check()) goto REjmpPrpp;
+      }
     }
     
     // number
@@ -196,9 +205,18 @@ void Application::SourceColoring() {
     else if( c=='/' ) {
       it++;
       if(it.check()&&*it=='/'){
-        it--;
+        it--;  REjmp:
         tok.color = TOKEN_COMMENT;
         _MAKE(it.line_check());
+        
+        if(it.get_line()[it.get_line().length()-1]=='\\'){
+          ctx.ColorData.emplace_back(tok);
+          it++;
+          tok.length=0;
+          tok.index=it.index;
+          tok.position=it.position;
+          if(it.check()) goto REjmp;
+        }
       }
       else if( it.check()&&*it=='*') { // block comment
         it--;
