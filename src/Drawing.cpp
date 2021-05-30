@@ -21,8 +21,9 @@ namespace Drawing {
   void DrawRect(int x, int y, int width, int height, COLORREF color, bool fill) {
     DeleteObject(SelectObject(target, CreateSolidBrush(color)));
     
-    if( fill )
+    if( fill ) {
       PatBlt(target, x, y, width, height, PATCOPY);
+    }
     else {
       DrawLine(x, y, x + width, y, color);
       DrawLine(x, y + height, x + width, y + height, color);

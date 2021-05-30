@@ -79,7 +79,9 @@ void Application::DrawEditor() {
   // カーソルがある行の背景を明るくする
   if( ctx.CursorPos.Y >= DrawIndexRange.Begin &&
     ctx.CursorPos.Y <= DrawIndexRange.End ) {
-    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR, );
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BOXCOLOR, false);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT + 1, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BOXCOLOR, false);
   }
   
   // ソースコード 描画
