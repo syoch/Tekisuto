@@ -165,13 +165,35 @@ void Application::SourceColoring() {
         // it++;
       // }
       for(std::wstring X : {
-        L"",
-        L"",
-        L"",
-        L"",
+        L"::",
+        L"&=", L"|=",
+        L"^=", L"+=",
+        L"-=", L"*=",
+        L"/=", L"%=",
+        L">>", L"<<",
+        L"==", L"!=",
+        L">=", L"<=",
+        L"&&", L"||",
+        L"!", L"~", L"&", L"|",
+        L">", L"<",
+        L"=",
+        L"+", L"-",
+        L"*", L"/", L"%",
+        L"(", L")",
+        L"[", L"]",
+        L"{", L"}",
+        L",", L".",
+        L";", L":",
       }) {
-        
+        if(it.position+X.length()<=it.get_line().length()&&it.get_line().substr(it.position,X.length())==X) {
+          tok.length=X.length();
+          for(char z=0;z<X.length();z++) it++;
+          goto _Zm;
+        }
       }
+      tok.length=1;
+      it++;
+    _Zm: ;
     }
     else
       it++;
