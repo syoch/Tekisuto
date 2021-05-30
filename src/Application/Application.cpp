@@ -60,7 +60,7 @@ bool Application::Create() {
   return hwnd != NULL;
 }
 
-void  Application::Show() {
+void Application::Show() {
   ShowWindow(hwnd, SW_SHOW);
 }
 

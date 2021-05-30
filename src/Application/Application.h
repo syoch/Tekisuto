@@ -21,6 +21,10 @@
 #define  SCROLLBAR_BACKCOLOR    RGB(30,30,30)   // スクロールバー 背景色
 #define  SCROLLBAR_BAR_COLOR    RGB(60,60,60)   // スクロールバー つまみ 色
 
+// タイマー
+#define  TIMER_SCROLLBAR    100
+#define  TIMER_COLORING     200
+
 
 struct Size {
   int Width = 0;
@@ -32,9 +36,24 @@ struct Point {
   int Y = 0;
 };
 
+struct Range {
+  int Begin = 0;
+  int End = 0;
+};
+
+struct Token {
+  //wchar_t*   stptr;
+  int        length;
+  int        index;
+  int        position;
+  COLORREF   color;
+};
+
 struct EditContext {
   std::vector<std::wstring>   Source;
   Point    CursorPos;
+  
+  std::vector<Token>  ColorData;
   
   int  ScrollY = 0;
   int  ScrollBar_Pos_Real = 0;
@@ -72,14 +91,22 @@ public:
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
   Size   ClientSize;                   // クライアントサイズ
   
+  // 描画の開始から終了まで
+  Range  DrawIndexRange;
+  
   EditContext& GetCurrentContext() const;
   
   void ForceRedraw();
+  
+  void DrawLinenum();
+  void DrawScrollBar();
   void DrawEditor();
   
   void UpdateWindowInfo();
   void UpdateMouseInfo();
   void UpdateCursorPos();
+  
+  void SourceColoring();
   
   void CheckScrollY(int& y);
   void CheckScrollBarPos(int& pos);

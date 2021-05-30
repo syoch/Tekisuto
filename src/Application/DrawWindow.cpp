@@ -30,16 +30,8 @@ void Application::CheckScrollBarPos(int& pos) {
   if( pos > ClientSize.Height - barSize ) pos = ClientSize.Height - barSize;
 }
 
-// ------------------------------------------------------- //
-//  エディタ 描画
-// ------------------------------------------------------- //
-void Application::DrawEditor() {
-  PAINTSTRUCT ps;
-  
+void Application::DrawLinenum() {
   auto& ctx = GetCurrentContext();
-  
-  // 背景
-  Drawing::DrawRect(0, 0, ClientSize.Width, ClientSize.Height, WINDOW_BACKCOLOR);
   
   // 行番号 背景
   Drawing::DrawRect(0, 0, LINENUM_BAR_WIDTH - 4, ClientSize.Height, LINENUM_BACKCOLOR);
@@ -47,25 +39,14 @@ void Application::DrawEditor() {
   // 行番号と編集部分の区切り
   Drawing::DrawLine(LINENUM_BAR_WIDTH - 4, 0, LINENUM_BAR_WIDTH - 4, ClientSize.Height, COLOR_WHITE);
   
-  // ソースコードの描画する範囲
-  // 開始 ~ 終了 まで (単位 = 行)
-  const int begin = ctx.ScrollY;
-  const int end = std::min<int>(ctx.Source.size(), begin + ClientSize.Height / CHAR_HEIGHT + 1);
-  
-  // ソースコード 描画
   int posY = 0;
-  for( auto i = begin; i < end; i++, posY += CHAR_HEIGHT ) {
-    auto const& line = ctx.Source[i];
-    
-    Drawing::DrawString(line, LINENUM_BAR_WIDTH, posY, RGB(255, 255, 255), 0, true);
-    
-    // 行番号
+  for( auto i = DrawIndexRange.Begin; i < DrawIndexRange.End; i++, posY += CHAR_HEIGHT ) {
     Drawing::DrawString(format(L"%8d", i + 1), 0, posY, RGB(255, 255, 255), 0, true);
   }
-  
-  // カーソル
-  if( ctx.CursorPos.Y >= begin && ctx.CursorPos.Y < end )
-    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
+}
+
+void Application::DrawScrollBar() {
+  auto& ctx = GetCurrentContext();
   
   // スクロールバー 背景
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH, 0, SCROLLBAR_WIDTH, ClientSize.Height, SCROLLBAR_BACKCOLOR);
@@ -74,6 +55,53 @@ void Application::DrawEditor() {
 //  int barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
 //  if( barSize < 20 ) barSize = 20;
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Draw, SCROLLBAR_WIDTH - 4, barSize, SCROLLBAR_BAR_COLOR);
+  
+}
+
+// ------------------------------------------------------- //
+//  エディタ 描画
+// ------------------------------------------------------- //
+void Application::DrawEditor() {
+  static PAINTSTRUCT ps;
+  
+  auto& ctx = GetCurrentContext();
+  
+  // 背景
+  Drawing::DrawRect(0, 0, ClientSize.Width, ClientSize.Height, WINDOW_BACKCOLOR);
+  
+  // ソースコードの描画する範囲
+  // 開始 ~ 終了 まで (単位 = 行)
+  DrawIndexRange = {
+    ctx.ScrollY,
+    std::min<int>(ctx.Source.size(), DrawIndexRange.Begin + ClientSize.Height / CHAR_HEIGHT + 1)
+  };
+  
+  // ソースコード 描画
+  // int posY = 0;
+  // for( auto i = DrawIndexRange.Begin; i < DrawIndexRange.End; i++, posY += CHAR_HEIGHT ) {
+    // auto const& line = ctx.Source[i];
+    
+    // Drawing::DrawString(line, LINENUM_BAR_WIDTH, posY, RGB(255, 255, 255), 0, true);
+  // }
+  for( auto&& token : ctx.ColorData ) {
+    if( token.index < DrawIndexRange.Begin )
+      continue;
+    
+    if( token.index >= DrawIndexRange.End )
+      break;
+    
+    auto posY = (token.index - ctx.ScrollY) * CHAR_HEIGHT;
+//    TextOut(hBuffer, LINENUM_BAR_WIDTH, posY, token.stptr, token.length);
+    SetTextColor(hBuffer, token.color);
+    TextOut(hBuffer, LINENUM_BAR_WIDTH + token.position * CHAR_WIDTH, posY, &ctx.Source[token.index][0] + token.position, token.length);
+  }
+  
+  // カーソル
+  if( ctx.CursorPos.Y >= DrawIndexRange.Begin && ctx.CursorPos.Y < DrawIndexRange.End )
+    Drawing::DrawRect(ctx.CursorPos.X * CHAR_WIDTH + LINENUM_BAR_WIDTH, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, 2, CHAR_HEIGHT, RGB(255, 255, 255));
+  
+  DrawLinenum();
+  DrawScrollBar();
   
   
   // バッファからウィンドウにコピー (ダブルバッファリング)

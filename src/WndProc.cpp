@@ -83,6 +83,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
   barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
   if( barSize < 40 ) barSize = 40;
   
+  UpdateWindowInfo();
   
   switch( msg ) {
     // メニューバーなど
@@ -112,6 +113,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
           }
           
           ctx.CursorPos = { 0, 0 };
+          ctx.ScrollY = 0;
+          ctx.ScrollBar_Pos_Real = false;
+          ctx.ScrollBar_Pos_Draw = false;
+          ctx.IsMouseDown = false;
           DrawEditor();
           ForceRedraw();
           break;
@@ -121,8 +126,19 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       break;
     }
     
+    // タイマー
     case WM_TIMER: {
-      ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 5;
+      switch( wp ) {
+        case TIMER_SCROLLBAR: {
+          ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
+          break;
+        }
+        
+        case TIMER_COLORING: {
+          SourceColoring();
+          break;
+        }
+      }
       
       DrawEditor();
       ForceRedraw();
@@ -145,11 +161,11 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         VARIABLE_PITCH | FF_ROMAN, TEXT("MeiryoKe_Console")
       );
       
+      //
+      // ダイアログ構造体の初期化
       ofn.lStructSize = sizeof(OPENFILENAME);
       ofn.hwndOwner = hwnd;
-    //  ofn.lpstrFilter = TEXT("Text files {*.txt}\0*.txt\0");
       ofn.lpstrFilter = TEXT("C++ Files (.cpp)\0*.cpp\0All files\0*.*\0");
-      //ofn.lpstrCustomFilter = strCustom;
       ofn.nMaxCustFilter = 256;
       ofn.nFilterIndex = 0;
       ofn.lpstrFile = OpenFile_buf;
@@ -162,7 +178,9 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       
       Drawing::SetTarget(hBuffer);
       
-      SetTimer(hwnd, 1, 16, NULL);
+      // タイマー初期化
+      SetTimer(hwnd, TIMER_SCROLLBAR, 8, NULL);
+      SetTimer(hwnd, TIMER_COLORING, 2, NULL);
       
       ReleaseDC(hwnd, hdc);
       break;
@@ -238,8 +256,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       
       SetCapture(hwnd);
       
-      DrawEditor();
-      ForceRedraw();
+      //DrawEditor();
+      //ForceRedraw();
       break;
     }
     
@@ -263,8 +281,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         UpdateCursorPos();
       }
       
-      DrawEditor();
-      ForceRedraw();
+      //DrawEditor();
+      //ForceRedraw();
       break;
     }
     
