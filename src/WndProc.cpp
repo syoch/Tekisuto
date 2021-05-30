@@ -293,7 +293,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         UpdateCursorPos();
       }
       
-      //DrawEditor();
+      DrawEditor();
       //ForceRedraw();
       break;
     }

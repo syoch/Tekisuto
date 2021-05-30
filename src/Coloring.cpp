@@ -81,6 +81,7 @@ static auto _Wtypewords =
   L"string",
   L"struct",
   L"double",
+  L"inline",
   L"float",
   L"class",
   L"short",
