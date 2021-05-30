@@ -70,6 +70,66 @@ struct SourceIterator {
 #define  _MAKE(cond)  \
   while( cond ) tok.length++, it++
 
+static auto _Wtypewords =
+{
+  L"volatile",
+  L"private",
+  L"public",
+  L"extern",
+  L"size_t",
+  L"static",
+  L"string",
+  L"struct",
+  L"double",
+  L"float",
+  L"class",
+  L"short",
+  L"const",
+  L"enum",
+  L"auto",
+  L"char",
+  L"bool",
+  L"void",
+  L"long",
+  L"int",
+  L"asm",
+};
+
+static auto _Wkeywords =
+{
+  L"reinterpret_cast",
+  L"dynamic_cast",
+  L"static_cast",
+  L"const_cast",
+  L"constexpr",
+  L"namespace",
+  L"template",
+  L"typename",
+  L"continue",
+  L"operator",
+  L"typedef",
+  L"default",
+  L"private",
+  L"nullptr",
+  L"public",
+  L"return",
+  L"delete",
+  L"switch",
+  L"using",
+  L"while",
+  L"break",
+  L"catch",
+  L"throw",
+  L"false",
+  L"true",
+  L"else",
+  L"case",
+  L"try",
+  L"for",
+  L"new",
+  L"if",
+  L"do",
+};
 
 void Application::SourceColoring() {
   auto& ctx = GetCurrentContext();
@@ -99,7 +159,27 @@ void Application::SourceColoring() {
     else if( isalpha(c) || c == '_' ) {
       tok.color = TOKEN_IDENT;
       _MAKE( it.line_check() && (isalnum(*it) || *it == '_') );
-    }
+      
+      // find keywords
+      {
+        std::wstring ws = ctx.Source[tok.index].substr(tok.position, tok.length);
+        
+        for(auto&& T :_Wtypewords){
+          if(ws==T){
+            tok.color = TOKEN_TYPEWORD;
+            goto Atomjmp;
+          }
+        }
+        
+        for(auto&&T : _Wkeywords ){
+          if(ws==T) {
+            tok.color=TOKEN_KEYWORD;
+            goto Atomjmp;
+          }
+        }
+        
+       Atomjmp:  ;
+     }}
     
     // string / char
     else if( c == '\'' || c == '"' ) {
@@ -160,32 +240,29 @@ void Application::SourceColoring() {
     // other
     else if( c > ' ') { OTHERjmp:
       tok.color = COLOR_WHITE;
-      // while(it.check() && (*it != ' '&& !isalnum(*it) && *it!='_')){
-        // tok.length++;
-        // it++;
-      // }
-      for(std::wstring X : {
-        L"::",
-        L"&=", L"|=",
-        L"^=", L"+=",
-        L"-=", L"*=",
+  for(std::wstring X : {
+    L"::",
+     L"&=", L"|=",
+      L"^=", L"+=",
+       L"-=", L"*=",
         L"/=", L"%=",
-        L">>", L"<<",
-        L"==", L"!=",
-        L">=", L"<=",
-        L"&&", L"||",
-        L"!", L"~", L"&", L"|",
-        L">", L"<",
-        L"=",
-        L"+", L"-",
-        L"*", L"/", L"%",
-        L"(", L")",
-        L"[", L"]",
-        L"{", L"}",
+    L">>", L"<<",
+    L"==", L"!=",
+    L">=", L"<=",
+    L"&&", L"||",
+    L"!", L"~", L"&", L"|",
+    L">", L"<",
+    L"=",
+    L"+", L"-",
+    L"*", L"/", L"%",
+    L"(", L")",
+    L"[", L"]",
+    L"{", L"}",
         L",", L".",
         L";", L":",
       }) {
-        if(it.position+X.length()<=it.get_line().length()&&it.get_line().substr(it.position,X.length())==X) {
+        if(it.position+X.length()<=it.get_line().length()&&
+          it.get_line().substr(it.position,X.length())==X) {
           tok.length=X.length();
           for(char z=0;z<X.length();z++) it++;
           goto _Zm;
