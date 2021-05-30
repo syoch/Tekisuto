@@ -225,7 +225,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size()) - barSize / 2;
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
       
-      DrawEditor();
+      //DrawEditor();
       break;
     }
     
@@ -309,8 +309,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
       
       
-      DrawEditor();
-      ForceRedraw();
+      //DrawEditor();
+      //ForceRedraw();
       break;
     }
     
@@ -328,8 +328,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       line.insert(line.begin() + ctx.CursorPos.X, keycode);
       ctx.CursorPos.X++;
       
-      DrawEditor();
-      ForceRedraw();
+      //DrawEditor();
+      //ForceRedraw();
       
       break;
     }
@@ -406,8 +406,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         }
       }
       
-      DrawEditor();
-      ForceRedraw();
+      //DrawEditor();
+      //ForceRedraw();
       
       break;
     }

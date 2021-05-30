@@ -65,6 +65,7 @@ struct SourceIterator {
 #define  TOKEN_STRING       RGB(150,150,150)
 #define  TOKEN_TYPEWORD     RGB(240,130,240)
 #define  TOKEN_KEYWORD      RGB(100,200,255)
+#define  TOKEN_COMMENT      RGB(40,200,40)
 
 #define  _MAKE(cond)  \
   while( cond ) tok.length++, it++
@@ -78,7 +79,7 @@ void Application::SourceColoring() {
   
   while( it.check() ) {
     auto c = *it;
-    Token tok { };
+    Token tok = { };
     tok.index = it.index;
     tok.position = it.position;
     
@@ -111,16 +112,73 @@ void Application::SourceColoring() {
       tok.length++;
     }
     
-    // other
-    else {
-      tok.color = COLOR_WHITE;
-      _MAKE(it.check()&&(!isalnum(*it)));
+    // line comment
+    else if( c=='/' ) {
+      it++;
+      if(it.check()&&*it=='/'){
+        it--;
+        tok.color = TOKEN_COMMENT;
+        _MAKE(it.line_check());
+      }
+      else if( it.check()&&*it=='*') { // block comment
+        it--;
+        tok.color=TOKEN_COMMENT;
+        
+        tok.length=2;
+        ctx.ColorData.emplace_back(tok);
+        tok.length=0;
+          it++; it++;
+        
+        while( 1 ) {
+          if(!it.check())break;
+          while(it.line_check()){
+            if(*it=='*'){
+              it++; if( it.line_check()&&*it=='/'){
+                it++;
+                tok.length=it.position;
+                ctx.ColorData.emplace_back(tok);
+                goto ENDjmp;
+              }else it--;
+            }
+            tok.length++;
+            it++;
+          }
+          tok.length=it.get_line().length();
+          ctx.ColorData.emplace_back(tok);
+          it++;
+          tok.length=0;
+          tok.index = it.index;
+          tok.position=it.position;
+        }
+        ENDjmp: ;
+      }
+      else {
+        it--; goto OTHERjmp;
+      }
     }
+    
+    // other
+    else if( c > ' ') { OTHERjmp:
+      tok.color = COLOR_WHITE;
+      // while(it.check() && (*it != ' '&& !isalnum(*it) && *it!='_')){
+        // tok.length++;
+        // it++;
+      // }
+      for(std::wstring X : {
+        L"",
+        L"",
+        L"",
+        L"",
+      }) {
+        
+      }
+    }
+    else
+      it++;
     
     
     
     ctx.ColorData.emplace_back(tok);
     
-    it++;
   }
 }
