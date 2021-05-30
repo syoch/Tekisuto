@@ -198,9 +198,26 @@ void Application::SourceColoring() {
       tok.color = TOKEN_STRING;
       it++;
       tok.length++;
-      _MAKE(it.check() && *it != ch );
-      it++;
-      tok.length++;
+      //_MAKE(it.check() && *it != ch );
+      while( it.check() ) {
+        if( *it == ch ) {
+          it++;
+          tok.length++;
+          break;
+        }
+        else if( !it.line_check() ) {
+          ctx.ColorData.emplace_back(tok);
+          it++;
+          tok.length=0;
+          tok.index=it.index;
+          tok.position=it.position;
+        }
+        else {
+          tok.length++;
+          it++;
+        }
+      }
+      
     }
     
     // line comment
