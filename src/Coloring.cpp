@@ -126,7 +126,7 @@ void Application::SourceColoring() {
     tok.index = it.index;
     tok.position = it.position;
 
-    // proprocess
+    // プリプロセッサ
     if( c == '#' ) {
       tok.color = TOKEN_PREPROCESS;
     REjmpPrpp:
@@ -142,18 +142,18 @@ void Application::SourceColoring() {
       }
     }
 
-    // number
+    // 数字
     else if( isdigit(c) ) {
       tok.color = TOKEN_NUMBER;
       _MAKE(it.check() && (isalnum(*it) || *it == '.'));
     }
 
-    // identifier
+    // 識別子
     else if( isalpha(c) || c == '_' ) {
       tok.color = TOKEN_IDENT;
       _MAKE(it.line_check() && (isalnum(*it) || *it == '_'));
 
-      // find keywords
+      // 予約語かどうか調べる
       std::wstring ws = ctx.Source[tok.index].substr(tok.position, tok.length);
 
       for( auto&& T : _Wtypewords ) {
@@ -173,7 +173,7 @@ void Application::SourceColoring() {
     HitJmp:;
     }
 
-    // string / char
+    // 文字列
     else if( c == '\'' || c == '"' ) {
       auto ch = c;
       tok.color = TOKEN_STRING;
@@ -225,7 +225,6 @@ void Application::SourceColoring() {
             break;
         }
 
-
         it++;
         tok.length++;
       }
@@ -258,8 +257,8 @@ void Application::SourceColoring() {
       }
     }
 
-    // other
-    else {// if( c > ' ' ) {
+    // その他 (記号)
+    else {
       tok.color = COLOR_WHITE;
 
       for( std::wstring X : Punctuaters ) {
