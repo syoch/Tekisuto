@@ -159,18 +159,18 @@ void Application::SourceColoring() {
       for( auto&& T : _Wtypewords ) {
         if( ws == T ) {
           tok.color = TOKEN_TYPEWORD;
-          goto Atomjmp;
+          goto HitJmp;
         }
       }
 
       for( auto&& T : _Wkeywords ) {
         if( ws == T ) {
           tok.color = TOKEN_KEYWORD;
-          goto Atomjmp;
+          goto HitJmp;
         }
       }
 
-    Atomjmp:;
+    HitJmp:;
     }
 
     // string / char
@@ -259,9 +259,9 @@ void Application::SourceColoring() {
     }
 
     // other
-    else if( c > ' ' ) {
-    OTHERjmp:
+    else {// if( c > ' ' ) {
       tok.color = COLOR_WHITE;
+
       for( std::wstring X : Punctuaters ) {
         if( it.match(X) ) {
           tok.length += X.length();
@@ -269,14 +269,12 @@ void Application::SourceColoring() {
           goto _Zm;
         }
       }
+
       tok.length = 1;
       it++;
+
     _Zm:;
     }
-    else
-      it++;
-
-
 
     ctx.ColorData.emplace_back(tok);
 
