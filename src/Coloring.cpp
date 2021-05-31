@@ -53,8 +53,7 @@ static auto Punctuaters = {
 #define  _MAKE(cond)  \
   while( cond ) tok.length++, it++
 
-static auto _Wtypewords =
-{
+static auto _Wtypewords = {
   L"volatile",
   L"private",
   L"public",
@@ -79,8 +78,7 @@ static auto _Wtypewords =
   L"asm",
 };
 
-static auto _Wkeywords =
-{
+static auto _Wkeywords = {
   L"reinterpret_cast",
   L"dynamic_cast",
   L"static_cast",
@@ -130,17 +128,18 @@ void Application::SourceColoring() {
 
     // proprocess
     if( c == '#' ) {
-      tok.color = TOKEN_PREPROCESS; REjmpPrpp:
-    _MAKE(it.line_check() && *it != '\n');
+      tok.color = TOKEN_PREPROCESS;
+    REjmpPrpp:
+      _MAKE(it.line_check() && *it != '\n');
 
-    if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
-      ctx.ColorData.emplace_back(tok);
-      it++;
-      tok.length = 0;
-      tok.index = it.index;
-      tok.position = it.position;
-      if( it.check() ) goto REjmpPrpp;
-    }
+      if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
+        ctx.ColorData.emplace_back(tok);
+        it++;
+        tok.length = 0;
+        tok.index = it.index;
+        tok.position = it.position;
+        if( it.check() ) goto REjmpPrpp;
+      }
     }
 
     // number
@@ -155,25 +154,23 @@ void Application::SourceColoring() {
       _MAKE(it.line_check() && (isalnum(*it) || *it == '_'));
 
       // find keywords
-      {
-        std::wstring ws = ctx.Source[tok.index].substr(tok.position, tok.length);
+      std::wstring ws = ctx.Source[tok.index].substr(tok.position, tok.length);
 
-        for( auto&& T : _Wtypewords ) {
-          if( ws == T ) {
-            tok.color = TOKEN_TYPEWORD;
-            goto Atomjmp;
-          }
+      for( auto&& T : _Wtypewords ) {
+        if( ws == T ) {
+          tok.color = TOKEN_TYPEWORD;
+          goto Atomjmp;
         }
-
-        for( auto&& T : _Wkeywords ) {
-          if( ws == T ) {
-            tok.color = TOKEN_KEYWORD;
-            goto Atomjmp;
-          }
-        }
-
-      Atomjmp:;
       }
+
+      for( auto&& T : _Wkeywords ) {
+        if( ws == T ) {
+          tok.color = TOKEN_KEYWORD;
+          goto Atomjmp;
+        }
+      }
+
+    Atomjmp:;
     }
 
     // string / char
@@ -182,7 +179,7 @@ void Application::SourceColoring() {
       tok.color = TOKEN_STRING;
       it++;
       tok.length++;
-      //_MAKE(it.check() && *it != ch );
+
       while( it.check() ) {
         if( *it == ch ) {
           it++;
@@ -201,25 +198,25 @@ void Application::SourceColoring() {
           it++;
         }
       }
-
     }
 
     // line comment
     else if( c == '/' ) {
       it++;
       if( it.check() && *it == '/' ) {
-        it--;  REjmp:
-      tok.color = TOKEN_COMMENT;
-      _MAKE(it.line_check());
+        it--;
+      REjmp:
+        tok.color = TOKEN_COMMENT;
+        _MAKE(it.line_check());
 
-      if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
-        ctx.ColorData.emplace_back(tok);
-        it++;
-        tok.length = 0;
-        tok.index = it.index;
-        tok.position = it.position;
-        if( it.check() ) goto REjmp;
-      }
+        if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
+          ctx.ColorData.emplace_back(tok);
+          it++;
+          tok.length = 0;
+          tok.index = it.index;
+          tok.position = it.position;
+          if( it.check() ) goto REjmp;
+        }
       }
       else if( it.check() && *it == '*' ) { // block comment
         it--;
@@ -231,7 +228,9 @@ void Application::SourceColoring() {
         it++; it++;
 
         while( 1 ) {
-          if( !it.check() )break;
+          if( !it.check() )
+            break;
+          
           while( it.line_check() ) {
             if( *it == '*' ) {
               it++; if( it.line_check() && *it == '/' ) {
@@ -245,6 +244,7 @@ void Application::SourceColoring() {
             tok.length++;
             it++;
           }
+
           tok.length = it.get_line().length();
           ctx.ColorData.emplace_back(tok);
           it++;
@@ -264,10 +264,9 @@ void Application::SourceColoring() {
     OTHERjmp:
       tok.color = COLOR_WHITE;
       for( std::wstring X : Punctuaters ) {
-        if( it.position + X.length() <= it.get_line().length() &&
-          it.get_line().substr(it.position, X.length()) == X ) {
-          tok.length = X.length();
-          for( char z = 0; z < X.length(); z++ ) it++;
+        if( it.match(X) ) {
+          tok.length += X.length();
+          it += X.length();
           goto _Zm;
         }
       }

@@ -329,7 +329,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollY -= delta;
       CheckScrollY(ctx.ScrollY);
 
-      ctx.ScrollBar_Pos_Real = (float)ctx.ScrollY * ((float)(ClientSize.Height - (ctx.Source.size() >= ClientSize.Height / CHAR_HEIGHT ? barSize : 0)) / (float)ctx.Source.size());
+      ctx.ScrollBar_Pos_Real =
+        (float)ctx.ScrollY * ((float)(ClientSize.Height - (ctx.Source.size() >= ClientSize.Height / CHAR_HEIGHT ? barSize : 0)) / (float)ctx.Source.size());
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
 
       DrawEditor();

@@ -56,6 +56,11 @@ public:
     }
   }
 
+  auto operator += (int n) {
+    for( int i = 0; i < n; i++ )
+      (*this)++;
+  }
+
   auto check() {
     auto& ctx = app->GetCurrentContext();
 
