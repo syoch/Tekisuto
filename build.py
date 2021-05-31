@@ -14,7 +14,7 @@ obj_dir   = 'objects'
 
 c_flags   = '-O1'
 cxx_flags = c_flags + ' -std=gnu++2a -Wno-psabi'
-ld_flags  = '-Wl,--gc-sections -mwindows'
+ld_flags  = '-Wl,--gc-sections -mwindows -static-libgcc'
 
 src_flags = \
  {

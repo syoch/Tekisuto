@@ -131,16 +131,23 @@ void Application::SourceColoring() {
     // プリプロセッサ
     if( c == '#' ) {
       tok.color = TOKEN_PREPROCESS;
-    REjmpPrpp:
-      _MAKE(it.line_check() && *it != '\n');
 
-      if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
-        ctx.ColorData.emplace_back(tok);
+      while( it.check() ) {
+        if( !it.line_check() ) {
+          if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
+            it++;
+            ctx.ColorData.emplace_back(tok); // 追加
+
+            // トークン作り直し
+            std::tie(tok.length, tok.index, tok.position)
+              = std::make_tuple(0, it.index, it.position);
+          }
+          else
+            break;
+        }
+
         it++;
-        tok.length = 0;
-        tok.index = it.index;
-        tok.position = it.position;
-        if( it.check() ) goto REjmpPrpp;
+        tok.length++;
       }
     }
 

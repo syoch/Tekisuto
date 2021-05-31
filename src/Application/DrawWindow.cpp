@@ -52,8 +52,6 @@ void Application::DrawScrollBar() {
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH, 0, SCROLLBAR_WIDTH, ClientSize.Height, SCROLLBAR_BACKCOLOR);
 
   // スクロールバー つまみ
-//  int barSize = ((float)ClientSize.Height / (float)ctx.Source.size());
-//  if( barSize < 20 ) barSize = 20;
   Drawing::DrawRect(ClientSize.Width - SCROLLBAR_WIDTH + 2, ctx.ScrollBar_Pos_Draw, SCROLLBAR_WIDTH - 4, barSize, SCROLLBAR_BAR_COLOR);
 
 }
@@ -79,9 +77,9 @@ void Application::DrawEditor() {
   // カーソルがある行の背景を明るくする
   if( ctx.CursorPos.Y >= DrawIndexRange.Begin &&
     ctx.CursorPos.Y <= DrawIndexRange.End ) {
-    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BACKCOLOR);
-    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BOXCOLOR, false);
-    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT + 1, ClientSize.Width, CHAR_HEIGHT, CURRENT_LINE_BOXCOLOR, false);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT - 2, CURRENT_LINE_BACKCOLOR);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT, ClientSize.Width, CHAR_HEIGHT - 2, CURRENT_LINE_BOXCOLOR, false);
+    Drawing::DrawRect(0, (ctx.CursorPos.Y - ctx.ScrollY) * CHAR_HEIGHT + 1, ClientSize.Width, CHAR_HEIGHT - 2, CURRENT_LINE_BOXCOLOR, false);
   }
 
   // ソースコード 描画
