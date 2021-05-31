@@ -42,14 +42,6 @@ static auto Punctuaters = {
   L":",
 };
 
-#define  TOKEN_PREPROCESS   RGB(157,126,98)    // プリプロセッサ
-#define  TOKEN_NUMBER       RGB(250,150,0)     // 数字
-#define  TOKEN_IDENT        RGB(255,255,255)   // 識別子
-#define  TOKEN_STRING       RGB(200,200,200)   // 文字列
-#define  TOKEN_TYPEWORD     RGB(240,130,240)   // 予約語 1
-#define  TOKEN_KEYWORD      RGB(100,200,255)   // 予約語 2
-#define  TOKEN_COMMENT      RGB(40,200,40)     // コメント
-
 #define  _MAKE(cond)  \
   while( cond ) tok.length++, it++
 
@@ -125,9 +117,11 @@ void Application::SourceColoring() {
   while( it.check() ) {
     auto c = *it;
     Token tok = { };
-    tok.index = it.index;
-    tok.position = it.position;
+    //tok.index = it.index;
+    //tok.position = it.position;
+    std::tie(tok.index, tok.position) = std::make_tuple(it.index, it.position);
 
+    
     // プリプロセッサ
     if( c == '#' ) {
       tok.color = TOKEN_PREPROCESS;

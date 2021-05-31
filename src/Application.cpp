@@ -1,6 +1,4 @@
-#include "../main.h"
-
-#define  CLASS_NAME  TEXT("TEKISUTO")
+#include "main.h"
 
 static Application* _app_instance;
 

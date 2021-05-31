@@ -1,4 +1,4 @@
 @echo off
 cls
-python build.py
+make
 pause
