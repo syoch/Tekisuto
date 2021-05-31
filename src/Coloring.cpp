@@ -200,62 +200,61 @@ void Application::SourceColoring() {
       }
     }
 
-    // line comment
-    else if( c == '/' ) {
-      it++;
-      if( it.check() && *it == '/' ) {
-        it--;
-      REjmp:
-        tok.color = TOKEN_COMMENT;
-        _MAKE(it.line_check());
+    // 行コメント
+    else if( it.match(L"//") ) {
+      it += 2;
+      tok.length = 2;
+      tok.color = TOKEN_COMMENT;
 
-        if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
-          ctx.ColorData.emplace_back(tok);
-          it++;
-          tok.length = 0;
-          tok.index = it.index;
-          tok.position = it.position;
-          if( it.check() ) goto REjmp;
-        }
-      }
-      else if( it.check() && *it == '*' ) { // block comment
-        it--;
-        tok.color = TOKEN_COMMENT;
-
-        tok.length = 2;
-        ctx.ColorData.emplace_back(tok);
-        tok.length = 0;
-        it++; it++;
-
-        while( 1 ) {
-          if( !it.check() )
-            break;
-          
-          while( it.line_check() ) {
-            if( *it == '*' ) {
-              it++; if( it.line_check() && *it == '/' ) {
-                it++;
-                tok.length = it.position;
-                ctx.ColorData.emplace_back(tok);
-                goto ENDjmp;
-              }
-              else it--;
-            }
-            tok.length++;
+      while( it.check() ) {
+        // 行末
+        if( !it.line_check() ) {
+          // 継続文字
+          if( it.get_line()[it.get_line().length() - 1] == '\\' ) {
             it++;
+            ctx.ColorData.emplace_back(tok); // 追加
+
+            // トークン作り直し
+            std::tie(tok.length, tok.index, tok.position)
+              = std::make_tuple(0, it.index, it.position);
+
+            continue;
           }
 
-          tok.length = it.get_line().length();
-          ctx.ColorData.emplace_back(tok);
-          it++;
-          tok.length = 0;
-          tok.index = it.index;
-          tok.position = it.position;
+          else
+            break;
         }
-      ENDjmp:;
+
+
+        it++;
+        tok.length++;
       }
-      else {
-        it--; goto OTHERjmp;
+    }
+
+    // ブロックコメント
+    else if( it.match(L"/*") ) {
+      it += 2;
+      tok.length += 2;
+      tok.color = TOKEN_COMMENT;
+
+      while( it.check() ) {
+        if( it.match(L"*/") ) {
+          it += 2;
+          tok.length += 2;
+          break;
+        }
+        else if( !it.line_check() ) {
+          ctx.ColorData.emplace_back(tok);
+
+          it++;
+          std::tie(tok.length, tok.index, tok.position)
+            = std::make_tuple(0, it.index, it.position);
+
+          continue;
+        }
+
+        it++;
+        tok.length++;
       }
     }
 
