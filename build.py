@@ -14,7 +14,7 @@ obj_dir   = 'objects'
 
 c_flags   = '-O1'
 cxx_flags = c_flags + ' -std=gnu++2a -Wno-psabi'
-ld_flags  = '-Wl,--gc-sections -mwindows -static-libgcc'
+ld_flags  = '-Wl,--gc-sections,-s -mwindows -static-libgcc -static-libstdc++'
 
 src_flags = \
  {
@@ -44,6 +44,7 @@ def change_ext(name, x):
 def get_ext(name):
   return name[name.find('.') + 1:]
 
+# 指定されたファイルのすべての依存してるファイルを取得する
 def get_depends(file):
   D = f'{obj_dir}/{basename(change_ext(file, "d"))}'
   res = os.system(f'gcc -MM -o {D} {file}')
@@ -61,12 +62,16 @@ def get_depends(file):
     i = i.split(' ')
     ret += i
   
+  print(ret)
+  
   os.system(f'rm {D}')
   return ret
 
 def check_build(file):
   obj = f'{obj_dir}/{basename(change_ext(file, "o"))}'
   obj_time = 0
+  
+  print(obj)
   
   if not os.path.exists(obj):
     return True
