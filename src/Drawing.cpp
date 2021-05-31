@@ -2,7 +2,7 @@
 
 namespace {
   HDC target;
-  
+
 }
 
 namespace Drawing {
@@ -20,7 +20,7 @@ namespace Drawing {
 
   void DrawRect(int x, int y, int width, int height, COLORREF color, bool fill) {
     DeleteObject(SelectObject(target, CreateSolidBrush(color)));
-    
+
     if( fill ) {
       PatBlt(target, x, y, width, height, PATCOPY);
     }

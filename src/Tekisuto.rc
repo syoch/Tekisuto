@@ -1,8 +1,14 @@
+#include "resource.h"
+
 TEKISUTO_MENUBAR MENU {
   POPUP "ファイル (&F)" {
-    MENUITEM "開く (&O)", 10000
+    MENUITEM "開く (&O)", MENUBAR_FILE_OPEN
     MENUITEM SEPARATOR
-    MENUITEM "設定", 10100
-    MENUITEM "終了", 10200
+    MENUITEM "設定", MENUBAR_FILE_OPTIONS
+    MENUITEM "終了", MENUBAR_FILE_EXIT
+  }
+  
+  POPUP "デバッグ" {
+    MENUITEM "New Context", MENUBAR_DEBUG_NEW_CONTEXT
   }
 }

@@ -18,6 +18,7 @@
 
 #include "Drawing.h"
 #include "Application/Application.h"
+#include "SourceIterator.h"
 #include "resource.h"
 
 template <class... Args>

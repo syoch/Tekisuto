@@ -55,13 +55,13 @@ struct Token {
 struct EditContext {
   std::vector<std::wstring>   Source;
   Point    CursorPos;
-  
+
   std::vector<Token>  ColorData;
-  
+
   int  ScrollY = 0;
   int  ScrollBar_Pos_Real = 0;
   int  ScrollBar_Pos_Draw = 0;
-  
+
   bool   IsMouseDown = false;
 };
 
@@ -69,65 +69,65 @@ class Application {
 public:
   std::vector<EditContext>  Contexts;
   int CurrentIndex = 0;
-  
+
   HWND      hwnd;          // ウィンドウハンドル
   WNDCLASS  winc;          // ウィンドウクラス
   MSG       msg;           // メッセージ
   WNDPROC   wndProc;       // ウィンドウプロシージャ
   HINSTANCE hInstance;     // アプリケーションのインスタンスハンドル
   std::wstring className;  // クラス名
-  
+
   // ダブルバッファリング
   HBITMAP   hBitmap;       // ビットマップ
   HDC       hBuffer;       // ビットマップ バッファ
-  
+
   // ウィンドウ情報
   WINDOWINFO  WindowInfo;
-  
+
   // マウス座標
   Point   MousePos;         // 画面上
   Point   MousePos_Client;  // クライアント上
-  
+
   int barSize;
   bool IsScrolling = false; // スクロールバーを操作中か
-  
+
   Size   WindowSize = { 600, 400 };    // ウィンドウサイズ
   Size   ClientSize;                   // クライアントサイズ
-  
+
   // 描画の開始から終了まで
   Range  DrawIndexRange;
-  
+
   bool IsScrollTimerLocked = false;
-  
+
   EditContext& GetCurrentContext() const;
-  
+
   void ForceRedraw();
-  
+
   void DrawLinenum();
   void DrawScrollBar();
   void DrawEditor();
-  
+
   void UpdateWindowInfo();
   void UpdateMouseInfo();
   void UpdateCursorPos();
-  
+
   void SourceColoring();
-  
+
   void CheckScrollY(int& y);
   void CheckScrollBarPos(int& pos);
-  
+
   LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   friend LRESULT CALLBACK WndProc_Wrap(HWND, UINT, WPARAM, LPARAM);
-  
+
   Application(std::wstring const& class_name);
   ~Application();
-  
+
   ATOM  Register(HINSTANCE hInstance);
   bool  Create();
   void  Show();
-  
+
   WPARAM  RunMainLoop();
-  
+
   static Application* GetInstance();
-  
+
 };

@@ -2,7 +2,7 @@
 
 namespace Drawing {
   void SetTarget(HDC hdc);
-  
+
   void DrawPixel(int x, int y, COLORREF color);
   COLORREF GetPixel(int x, int y);
 

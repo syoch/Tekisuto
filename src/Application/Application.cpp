@@ -14,36 +14,36 @@ EditContext& Application::GetCurrentContext() const {
 Application::Application(std::wstring const& class_name)
   :className(class_name) {
   Contexts.resize(1);
-  
-  for(auto&& L: {
+
+  for( auto&& L : {
     L"#include <iostream>",
     L"",
     L"int main(int argc, char** argv) {",
     L"  std::cout << \"Hello, World!\\n\"",
     L"}"
-  } ) {
+    } ) {
     GetCurrentContext().Source.emplace_back(L);
   }
-  
+
   _app_instance = this;
 }
 
 Application::~Application()
-  = default;
+= default;
 
 ATOM  Application::Register(HINSTANCE hInstance) {
   this->hInstance = hInstance;
-  
-  winc.style          = CS_HREDRAW | CS_VREDRAW;
-  winc.lpfnWndProc    = WndProc_Wrap;
-  winc.cbClsExtra     = winc.cbWndExtra	= 0;
-  winc.hInstance      = hInstance;
-  winc.hIcon          = LoadIcon(NULL , IDI_APPLICATION);
-  winc.hCursor        = LoadCursor(NULL , IDC_ARROW);
-  winc.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
-  winc.lpszMenuName	  = TEXT("TEKISUTO_MENUBAR");
-  winc.lpszClassName  = className.c_str();
-  
+
+  winc.style = CS_HREDRAW | CS_VREDRAW;
+  winc.lpfnWndProc = WndProc_Wrap;
+  winc.cbClsExtra = winc.cbWndExtra = 0;
+  winc.hInstance = hInstance;
+  winc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+  winc.hCursor = LoadCursor(NULL, IDC_ARROW);
+  winc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+  winc.lpszMenuName = TEXT("TEKISUTO_MENUBAR");
+  winc.lpszClassName = className.c_str();
+
   return RegisterClass(&winc);
 }
 
@@ -56,7 +56,7 @@ bool Application::Create() {
     NULL, NULL,
     hInstance, NULL
   );
-  
+
   return hwnd != NULL;
 }
 
@@ -69,7 +69,7 @@ WPARAM  Application::RunMainLoop() {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
-  
+
   return msg.wParam;
 }
 
