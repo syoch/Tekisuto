@@ -118,7 +118,9 @@ void Application::SourceColoring() {
   auto& ctx = GetCurrentContext();
 
   SourceIterator it = Application::GetInstance();
-  ctx.ColorData.clear();
+  //ctx.ColorData.clear();
+
+  size_t tkIndex = 0;
 
   while( it.check() ) {
     auto c = *it;
@@ -275,7 +277,15 @@ void Application::SourceColoring() {
     _Zm:;
     }
 
-    ctx.ColorData.emplace_back(tok);
+    if( ctx.ColorData.size() <= tkIndex )
+      ctx.ColorData.emplace_back(tok);
+    else
+      ctx.ColorData[tkIndex] = tok;
 
+    tkIndex++;
+  }
+
+  if( tkIndex < ctx.ColorData.size() ) {
+    ctx.ColorData.resize(tkIndex + 1);
   }
 }
