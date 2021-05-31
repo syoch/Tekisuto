@@ -254,15 +254,15 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       UpdateMouseInfo();
       ctx.IsMouseDown = true;
 
-      if(
-        MousePos.X >= WindowInfo.rcClient.left + LINENUM_BAR_WIDTH &&
-        MousePos.Y >= WindowInfo.rcClient.top &&
-        MousePos.X < WindowInfo.rcClient.right - SCROLLBAR_WIDTH &&
-        MousePos.Y < WindowInfo.rcClient.bottom
+      if( // 編集部分
+        MousePos.X >= WindowInfo.rcClient.left + LINENUM_BAR_WIDTH && MousePos.Y >= WindowInfo.rcClient.top &&
+        MousePos.X < WindowInfo.rcClient.right - SCROLLBAR_WIDTH && MousePos.Y < WindowInfo.rcClient.bottom
         ) {
         UpdateCursorPos();
 
       }
+      
+      // スクロールバー
       else if( MousePos.X >= WindowInfo.rcClient.right - SCROLLBAR_WIDTH ) {
         IsScrolling = true;
 
@@ -304,7 +304,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         UpdateCursorPos();
       }
 
-      DrawEditor();
+      //DrawEditor();
       //ForceRedraw();
       break;
     }
@@ -334,7 +334,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
 
       DrawEditor();
-      ForceRedraw();
+      //ForceRedraw();
       break;
     }
 
@@ -342,7 +342,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     case WM_CHAR:
     {
       static const std::wstring check_str = L" `~!@#$%^&*()_-+={[}]\\|'\";:,<.>/?";
-      wchar_t keycode = wp & 0xFFFF;
+      auto keycode = (wchar_t)wp;
 
       if( !isalnum(keycode) ) {
         if( check_str.find(keycode) == std::wstring::npos )
