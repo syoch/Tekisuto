@@ -195,6 +195,25 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       ReleaseDC(hwnd, hdc);
 
+      // デバッグようにファイルを開く
+
+      ctx.Source.clear();
+      
+      std::wifstream ifs("Z:\\home\\syoch\\Downloads\\output_chunks.cc");
+      std::wstring line;
+      while( std::getline(ifs, line) ) {
+        ctx.Source.emplace_back(line);
+      }
+
+      SourceColoring();
+
+      ctx.CursorPos = { 0, 0 };
+      ctx.ScrollBar_Pos_Real = ctx.ScrollBar_Pos_Draw=0;
+      ctx.ScrollY=312;
+      ctx.IsMouseDown = false;
+
+      DrawEditor();
+      ForceRedraw();
       break;
     }
 
@@ -332,10 +351,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       ctx.ScrollBar_Pos_Real =
         (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
-      std::cout<<"ctx.ScrollBar_Pos_Real: "<<ctx.ScrollBar_Pos_Real;
 
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
-      std::cout<<"->"<<ctx.ScrollBar_Pos_Real<<std::endl;
 
       DrawEditor();
       //ForceRedraw();
