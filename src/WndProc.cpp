@@ -139,8 +139,9 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
           //auto old_val = ctx.ScrollBar_Pos_Draw;
 
-          //ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
-        ctx.ScrollBar_Pos_Draw=ctx.ScrollBar_Pos_Real;
+          auto diff=ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw;
+          ctx.ScrollBar_Pos_Draw += (diff) / 4;
+          if(diff<4)ctx.ScrollBar_Pos_Draw+=diff;
 
           // if( !IsScrollTimerLocked && abs(old_val - ctx.ScrollBar_Pos_Draw) <= 1 ){
             // KillTimer(hwnd, TIMER_SCROLLBAR);
