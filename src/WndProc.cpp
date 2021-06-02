@@ -139,7 +139,8 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
           //auto old_val = ctx.ScrollBar_Pos_Draw;
 
-          ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
+          //ctx.ScrollBar_Pos_Draw += (ctx.ScrollBar_Pos_Real - ctx.ScrollBar_Pos_Draw) / 4;
+        ctx.ScrollBar_Pos_Draw=ctx.ScrollBar_Pos_Real;
 
           // if( !IsScrollTimerLocked && abs(old_val - ctx.ScrollBar_Pos_Draw) <= 1 ){
             // KillTimer(hwnd, TIMER_SCROLLBAR);
@@ -348,11 +349,11 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       ctx.ScrollBar_Pos_Real=
           (float)(ctx.ScrollY+1) // 最後の行が含まれないため、1を加算する
-        / (float)ctx.Source.size() // 割合に形を変形する
-        * (float)ClientSize.Height // 実際のサイズに変換
+        / (float)ctx.Source.size() // 割合に変形する
+        * (float)(ClientSize.Height-barSize-2) // 実際のサイズに変形する（割合は0-1であるから）
       ;
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
-
+      
       DrawEditor();
       //ForceRedraw();
       break;
