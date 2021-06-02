@@ -196,26 +196,6 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       //SetTimer(hwnd, TIMER_COLORING, 16, NULL);
 
       ReleaseDC(hwnd, hdc);
-
-      // デバッグようにファイルを開く
-
-      ctx.Source.clear();
-      
-      std::wifstream ifs("Z:\\home\\syoch\\Downloads\\output_chunks.cc");
-      std::wstring line;
-      while( std::getline(ifs, line) ) {
-        ctx.Source.emplace_back(line);
-      }
-
-      SourceColoring();
-
-      ctx.CursorPos = { 0, 0 };
-      ctx.ScrollBar_Pos_Real = ctx.ScrollBar_Pos_Draw=0;
-      ctx.ScrollY=1718;
-      ctx.IsMouseDown = false;
-
-      DrawEditor();
-      ForceRedraw();
       break;
     }
 
