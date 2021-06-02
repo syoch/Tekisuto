@@ -1,4 +1,5 @@
 #include "main.h"
+#include <iostream>
 
 LRESULT CALLBACK WndProc_Wrap(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   return Application::GetInstance()->WndProc(hwnd, msg, wp, lp);
@@ -11,13 +12,13 @@ void Application::UpdateWindowInfo() {
   GetWindowInfo(hwnd, &WindowInfo);
 
   WindowSize = {  // ウィンドウサイズ 更新
-    WindowInfo.rcWindow.right - WindowInfo.rcWindow.left,
-    WindowInfo.rcWindow.bottom - WindowInfo.rcWindow.top
+    (int)(WindowInfo.rcWindow.right - WindowInfo.rcWindow.left),
+    (int)(WindowInfo.rcWindow.bottom - WindowInfo.rcWindow.top)
   };
 
   ClientSize = {  // クライアントサイズ 更新
-    WindowInfo.rcClient.right - WindowInfo.rcClient.left,
-    WindowInfo.rcClient.bottom - WindowInfo.rcClient.top
+    (int)(WindowInfo.rcClient.right - WindowInfo.rcClient.left),
+    (int)(WindowInfo.rcClient.bottom - WindowInfo.rcClient.top)
   };
 }
 
@@ -331,7 +332,10 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       ctx.ScrollBar_Pos_Real =
         (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
+      std::cout<<"ctx.ScrollBar_Pos_Real: "<<ctx.ScrollBar_Pos_Real;
+
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
+      std::cout<<"->"<<ctx.ScrollBar_Pos_Real<<std::endl;
 
       DrawEditor();
       //ForceRedraw();
