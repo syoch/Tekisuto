@@ -209,7 +209,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       ctx.CursorPos = { 0, 0 };
       ctx.ScrollBar_Pos_Real = ctx.ScrollBar_Pos_Draw=0;
-      ctx.ScrollY=312;
+      ctx.ScrollY=1718;
       ctx.IsMouseDown = false;
 
       DrawEditor();
