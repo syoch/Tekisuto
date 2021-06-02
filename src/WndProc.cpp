@@ -343,10 +343,7 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     // マウスホイール
     case WM_MOUSEWHEEL:
     {
-      int delta = GET_WHEEL_DELTA_WPARAM(wp);
-      delta /= 40;
-
-      ctx.ScrollY -= delta;
+      ctx.ScrollY -= GET_WHEEL_DELTA_WPARAM(wp)/40; // 入力される値が大きいから適当に小さくする
       CheckScrollY(ctx.ScrollY);
 
       ctx.ScrollBar_Pos_Real =
