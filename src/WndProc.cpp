@@ -346,9 +346,11 @@ LRESULT CALLBACK Application::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       ctx.ScrollY -= GET_WHEEL_DELTA_WPARAM(wp)/40; // 入力される値が大きいから適当に小さくする
       CheckScrollY(ctx.ScrollY);
 
-      ctx.ScrollBar_Pos_Real =
-        (float)ctx.ScrollY * ((float)ClientSize.Height / (float)ctx.Source.size());
-
+      ctx.ScrollBar_Pos_Real=
+          (float)(ctx.ScrollY+1) // 最後の行が含まれないため、1を加算する
+        / (float)ctx.Source.size() // 割合に形を変形する
+        * (float)ClientSize.Height // 実際のサイズに変換
+      ;
       CheckScrollBarPos(ctx.ScrollBar_Pos_Real);
 
       DrawEditor();
